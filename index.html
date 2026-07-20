@@ -178,8 +178,8 @@
       </div>
 
       <section class="message-box" aria-labelledby="discord-message-title">
-        <h2 id="discord-message-title">Discord zpráva</h2>
-        <p>Napiš mi své nejtajnější tajemství. 🐕</p>
+        <h2 id="discord-message-title">Discord message</h2>
+        <p>Tell me your deepest secret. :D🐕</p>
         <p></p>
 
         <button class="toggle-btn" type="button" id="toggleMessage" aria-expanded="false" aria-controls="formShell">
@@ -211,7 +211,7 @@
                   <label for="senderMessage">Message *</label>
                   <textarea id="senderMessage" name="message" placeholder="Write something…" required></textarea>
                 </div>
-                <button class="send-btn" type="submit">Odeslat na Discord</button>
+                <button class="send-btn" type="submit">Send</button>
                 <p class="status" id="formStatus" aria-live="polite"></p>
               </form>
             </div>
@@ -261,7 +261,7 @@
             timestamp: new Date().toISOString()
           }]
         };
-        status.textContent = 'Odesílám zprávu…';
+        status.textContent = 'Sending message…';
         try {
           const response = await fetch(webhookUrl, {
             method: 'POST',
@@ -270,9 +270,9 @@
           });
           if (!response.ok) throw new Error('Webhook request failed');
           form.reset();
-          status.textContent = 'Zpráva byla úspěšně odeslána.';
+          status.textContent = 'Message sent.';
         } catch (error) {
-          status.textContent = 'Odeslání se nepovedlo. Zkontroluj webhook nebo hosting.';
+          status.textContent = 'Something went wrong. Contact owner of this site.';
         }
       });
     })();
