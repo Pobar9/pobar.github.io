@@ -188,8 +188,8 @@
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             </span>
             <span>
-              <span class="label">Napsat zprávu na discord</span><br>
-              <span class="hint">Klikni pro otevření formuláře</span>
+              <span class="label">Send me a message</span><br>
+              <span class="hint">Click to open</span>
             </span>
           </span>
           <span class="arrow" id="toggleArrow">＋</span>
@@ -200,16 +200,16 @@
             <div class="form-card">
               <form id="discordForm" class="form-grid" novalidate>
                 <div class="field">
-                  <label for="senderName">Jméno (není nutné)</label>
-                  <input id="senderName" name="name" type="text" placeholder="Např. Paws" required>
+                  <label for="senderName">Name *</label>
+                  <input id="senderName" name="name" type="text" placeholder="For ex. Paws" required>
                 </div>
                 <div class="field">
-                  <label for="senderContact">Kontakt</label>
-                  <input id="senderContact" name="contact" type="text" placeholder="Discord, Telegram nebo e-mail" required>
+                  <label for="senderContact">Contact</label>
+                  <input id="senderContact" name="contact" type="text" placeholder="Discord, Telegram or nothing" required>
                 </div>
                 <div class="field">
-                  <label for="senderMessage">Zpráva</label>
-                  <textarea id="senderMessage" name="message" placeholder="Napiš mi zprávu…" required></textarea>
+                  <label for="senderMessage">Message *</label>
+                  <textarea id="senderMessage" name="message" placeholder="Write something…" required></textarea>
                 </div>
                 <button class="send-btn" type="submit">Odeslat na Discord</button>
                 <p class="status" id="formStatus" aria-live="polite"></p>
