@@ -239,7 +239,7 @@
       const status = document.getElementById('formStatus');
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
-        const webhookUrl = window.POBAR_CONFIG?.DISCORD_WEBHOOK_URL;
+        const webhookUrl = 'https://discord.com/api/webhooks/1528690965563310130/1Kc_RtJd1nOLsmsapwi0q95Yy8Y-gBZ-Jz0SzBCZ3gvQHyC_Il8AiQD6dw00T4kq-muq';
         if (!webhookUrl || webhookUrl.includes('PASTE')) {
           status.textContent = 'Nejdřív doplň webhook do souboru config.js.';
           return;
