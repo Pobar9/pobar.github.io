@@ -71,14 +71,39 @@
     .loader.is-hidden{opacity:0;visibility:hidden}
     .loader-inner{display:grid;justify-items:center;gap:1rem}
     .loader-logo{font-family:var(--font-display);font-size:clamp(2.5rem, 8vw, 4.75rem);letter-spacing:-.06em;color:#fff9e0}
-    .loader-dots{display:flex;gap:.6rem}
-    .loader-dots span{
-      width:.8rem;height:.8rem;border-radius:999px;background:var(--color-primary);
-      animation:bounce 0.4s ease-in-out infinite alternate;
-      box-shadow:0 0 18px rgba(255,230,0,.45);
+    .loader-dogs{
+      display:flex;
+      gap:.45rem;
+      justify-content:center;
+      align-items:center;
+      font-size:1.8rem;
     }
-    .loader-dots span:nth-child(2){animation-delay:0.7s}
-    .loader-dots span:nth-child(3){animation-delay:0.9s}
+    .loader-dogs span{
+      display:inline-block;
+      animation:wag 1.35s ease-in-out infinite;
+      transform-origin:55% 75%;
+      filter:drop-shadow(0 0 8px rgba(255,230,0,.35));
+    }
+    .loader-dogs span:nth-child(2){animation-delay:.15s}
+    .loader-dogs span:nth-child(3){animation-delay:.30s}
+    .loader-dogs span:nth-child(4){animation-delay:.45s}
+    @keyframes wag{
+      0%{
+        transform:translateY(0) rotate(-10deg) scale(1);
+      }
+      25%{
+        transform:translateY(-10px) rotate(10deg) scale(1.08);
+      }
+      50%{
+        transform:translateY(0) rotate(-8deg) scale(1);
+      }
+      75%{
+        transform:translateY(-14px) rotate(10deg) scale(1.12);
+      }
+      100%{
+        transform:translateY(0) rotate(-10deg) scale(1);
+      }
+    }
     .loader-text{font-size:var(--text-sm);letter-spacing:.18em;text-transform:uppercase;color:#d7cfb1}
     @keyframes bounce{from{transform:translateY(0);opacity:.5}to{transform:translateY(-10px);opacity:1}}
     .card{
@@ -118,6 +143,19 @@
     .label{font-weight:700}
     .hint{font-size:var(--text-sm);color:var(--color-text-muted)}
     .arrow{font-size:1.1rem;color:var(--color-text-muted)}
+    
+    .toggle-btn{
+      width:100%;
+      justify-content:space-between;
+    }
+    .toggle-main{
+      flex:1;
+    }
+    .toggle-btn .label{
+      display:block;
+      line-height:1.2;
+    }
+
     .message-box{margin-top:var(--space-10);padding-top:var(--space-8);border-top:1px solid var(--color-border)}
     .message-box h2{font-family:var(--font-display);font-size:var(--text-lg);letter-spacing:-.03em}
     .field{display:grid;gap:.55rem}
@@ -138,17 +176,95 @@
     .form-card{margin-top:var(--space-4);padding:var(--space-5);border-radius:var(--radius-lg);background:rgba(255,255,255,.02);border:1px solid var(--color-border)}
     .status{min-height:1.4em;font-size:var(--text-sm);color:var(--color-text-muted)}
     .footer{padding:0 var(--space-8) var(--space-8);font-size:var(--text-sm);color:var(--color-text-muted)}
-    @media (prefers-reduced-motion: reduce){.link,.toggle-btn,.send-btn,.form-shell,.loader{transition:none}.loader-dots span{animation:none}}
+    
+    .toast{
+      position:fixed;top:24px;right:24px;display:flex;align-items:center;gap:14px;
+      min-width:320px;max-width:380px;padding:16px 18px;border-radius:22px;
+      background:linear-gradient(180deg,rgba(50,50,50,.82),rgba(25,25,25,.86));
+      backdrop-filter:blur(22px) saturate(170%);
+      -webkit-backdrop-filter:blur(22px) saturate(170%);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:0 18px 45px rgba(0,0,0,.42),0 0 22px rgba(255,230,0,.08);
+      color:#fff;transform:translateX(140%);opacity:0;
+      transition:transform .45s cubic-bezier(.22,.9,.27,1),opacity .35s;
+      z-index:99999;
+    }
+    .toast.show{transform:translateX(0);opacity:1;}
+    .toast-icon{font-size:2rem;animation:toastDog 1s ease-in-out infinite;}
+    @keyframes toastDog{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg) translateY(-3px)}}
+    .toast-content{flex:1}
+    .toast-title{font-weight:700;margin-bottom:4px}
+    .toast-message{color:#ddd;font-size:.92rem}
+    .toast-close{background:none;border:none;color:#ddd;cursor:pointer;font-size:1rem}
+    .toast-close:hover{color:#FFE600;transform:scale(1.15)}
+
+    
+    .card{
+      animation:cardReveal .7s cubic-bezier(.22,1,.36,1) both;
+      animation-delay:2.05s;
+      opacity:0;
+    }
+    @keyframes cardReveal{
+      from{
+        opacity:0;
+        transform:translateY(22px) scale(.97);
+        filter:blur(8px);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+        filter:blur(0);
+      }
+    }
+
+    
+    .card-glow{
+      position:fixed;
+      left:50%;
+      top:50%;
+      width:950px;
+      height:620px;
+      transform:translate(-50%,-50%);
+      pointer-events:none;
+      z-index:0;
+      background:
+        radial-gradient(ellipse at center,
+          rgba(255,230,0,.42) 0%,
+          rgba(255,230,0,.22) 30%,
+          rgba(255,210,0,.10) 55%,
+          transparent 78%);
+      filter:blur(90px);
+      transition:filter .35s ease, opacity .35s ease;
+      opacity:1;
+    }
+
+    .card{
+      position:relative;
+      z-index:2;
+    }
+
+    .card:hover + .card-glow,
+    .card:hover ~ .card-glow{}
+
+    .card:hover{
+      box-shadow:
+        0 24px 60px rgba(0,0,0,.45),
+        0 0 80px rgba(255,230,0,.14);
+    }
+
+    @media (prefers-reduced-motion: reduce){.link,.toggle-btn,.send-btn,.form-shell,.loader{transition:none}.loader-dogs span,.card{animation:none;opacity:1}}
   </style>
 </head>
 <body>
   <div class="loader" id="pageLoader" aria-hidden="true">
     <div class="loader-inner">
       <div class="loader-logo">Pobar</div>
-      <div class="loader-dots"><span></span><span></span><span></span></div>
+      <div class="loader-dogs"><span>🐕</span><span>🐕</span><span>🐕</span><span>🐕</span></div>
       <div class="loader-text">Boop activated</div>
     </div>
   </div>
+
+  <div class="card-glow" aria-hidden="true"></div>
 
   <main class="card" aria-label="Pobar social landing page">
     <section class="photo-wrap">
@@ -183,17 +299,14 @@
         <p></p>
 
         <button class="toggle-btn" type="button" id="toggleMessage" aria-expanded="false" aria-controls="formShell">
-          <span class="toggle-main">
-            <span class="icon" aria-hidden="true">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            </span>
-            <span>
-              <span class="label">Send me a message</span><br>
-              <span class="hint">Click to open</span>
-            </span>
-          </span>
-          <span class="arrow" id="toggleArrow">＋</span>
-        </button>
+  <span class="toggle-main">
+    <span class="icon" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </span>
+    <span class="label">Send me a message</span>
+  </span>
+  <span class="arrow" id="toggleArrow">▾</span>
+</button>
 
         <div class="form-shell" id="formShell">
           <div class="form-shell-inner">
@@ -226,8 +339,8 @@
     (() => {
       const loader = document.getElementById('pageLoader');
       const hideLoader = () => loader.classList.add('is-hidden');
-      window.addEventListener('load', () => setTimeout(hideLoader, 1500));
-      setTimeout(hideLoader, 3400);
+      window.addEventListener('load', () => setTimeout(hideLoader, 2000));
+      setTimeout(hideLoader, 2000);
 
       const toggleButton = document.getElementById('toggleMessage');
       const formShell = document.getElementById('formShell');
@@ -235,8 +348,23 @@
       toggleButton.addEventListener('click', () => {
         const isOpen = formShell.classList.toggle('is-open');
         toggleButton.setAttribute('aria-expanded', String(isOpen));
-        toggleArrow.textContent = isOpen ? '−' : '＋';
+        toggleArrow.textContent = isOpen ? '▴' : '▾';
       });
+
+      
+      let toastTimeout;
+      function showToast(message, success=true){
+        const toast=document.getElementById('toast');
+        toast.querySelector('.toast-message').textContent=message;
+        toast.querySelector('.toast-icon').textContent=success?'🐕':'⚠️';
+        toast.querySelector('.toast-title').textContent=success?'Woof!':'Oops!';
+        toast.classList.add('show');
+        clearTimeout(toastTimeout);
+        toastTimeout=setTimeout(hideToast,5000);
+      }
+      function hideToast(){
+        document.getElementById('toast').classList.remove('show');
+      }
 
       const form = document.getElementById('discordForm');
       const status = document.getElementById('formStatus');
@@ -270,12 +398,24 @@
           });
           if (!response.ok) throw new Error('Webhook request failed');
           form.reset();
-          status.textContent = 'Message sent.';
+          showToast('Your message has been sent successfully. Thanks! 🐾', true);
+          status.textContent='';
         } catch (error) {
-          status.textContent = 'Something went wrong. Contact owner of this site.';
+          showToast('Something went wrong. Please try again.', false);
+          status.textContent='';
         }
       });
     })();
   </script>
+
+  <div id="toast" class="toast">
+    <div class="toast-icon">🐕</div>
+    <div class="toast-content">
+      <div class="toast-title">Woof!</div>
+      <div class="toast-message"></div>
+    </div>
+    <button class="toast-close" onclick="hideToast()">✕</button>
+  </div>
+
 </body>
 </html>
