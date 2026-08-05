@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html lang="cs" data-theme="dark">
+
+<html data-theme="dark" lang="cs">
 <head>
-  <meta charset="UTF-8">
-  <link rel="icon" type="image/png" href="https://media.discordapp.net/attachments/1528690939357298698/1529889482902339805/FWk8.webp?ex=6a63941c&is=6a62429c&hm=5b5c9db9e965cc96d4a3bc742f329e9d565d4eb83c9394596bf9227eeaf4f7c3&=&format=webp">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pobar</title>
-  <meta name="description" content="Woof!">
-  <link rel="preconnect" href="https://api.fontshare.com">
-  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&f[]=cabinet-grotesk@600,700&display=swap" rel="stylesheet">
-  <style>
+<meta charset="utf-8"/>
+<link href="https://media.discordapp.net/attachments/1528690939357298698/1529889482902339805/FWk8.webp?ex=6a63941c&amp;is=6a62429c&amp;hm=5b5c9db9e965cc96d4a3bc742f329e9d565d4eb83c9394596bf9227eeaf4f7c3&amp;=&amp;format=webp" rel="icon" type="image/png"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pobar</title>
+<meta content="Woof!" name="description"/>
+<link href="https://api.fontshare.com" rel="preconnect"/>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&amp;f[]=cabinet-grotesk@600,700&amp;display=swap" rel="stylesheet"/>
+<style>
     :root, [data-theme="light"] {
       --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
       --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
@@ -41,301 +42,124 @@
       --shadow: 0 18px 55px rgba(0,0,0,.36);
     }
     *,:before,:after{box-sizing:border-box;margin:0;padding:0}
-    body{
-      min-height:100dvh;
-      display:grid;
-      place-items:center;
-      padding:1.25rem;
-      font-family:var(--font-body);
-      font-size:var(--text-base);
-      color:var(--color-text);
-      background:
-        radial-gradient(circle at 14% 18%, rgba(150,150,150,.38), transparent 26%),
-        radial-gradient(circle at 85% 16%, rgba(255,230,0,.34), transparent 22%),
-        radial-gradient(circle at 78% 82%, rgba(255,230,0,.28), transparent 24%),
-        linear-gradient(135deg, rgba(255,230,0,.24) 0%, rgba(255,230,0,0) 38%),
-        linear-gradient(120deg, rgba(40,40,40,.44) 0%, rgba(40,40,40,0) 46%),
-        var(--color-bg);
-    }
-    img,svg{display:block;max-width:100%;height:auto}
-    a{text-decoration:none;color:inherit}
-    input,textarea,button{font:inherit;color:inherit}
-    .loader{
-      position:fixed;inset:0;display:grid;place-items:center;z-index:9999;
-      background:
-        radial-gradient(circle at 50% 30%, rgba(255,230,0,.18), transparent 24%),
-        linear-gradient(135deg, rgba(255,230,0,.10), rgba(255,230,0,0) 42%),
-        #090909;
-      transition:opacity .55s ease, visibility .55s ease;
-    }
-    .loader.is-hidden{opacity:0;visibility:hidden}
-    .loader-inner{display:grid;justify-items:center;gap:1rem}
-    .loader-logo{font-family:var(--font-display);font-size:clamp(2.5rem, 8vw, 4.75rem);letter-spacing:-.06em;color:#fff9e0}
-    .loader-dogs{
-      display:flex;
-      gap:.45rem;
-      justify-content:center;
-      align-items:center;
-      font-size:1.8rem;
-    }
-    .loader-dogs span{
-      display:inline-block;
-      animation:wag 1.35s ease-in-out infinite;
-      transform-origin:55% 75%;
-      filter:drop-shadow(0 0 8px rgba(255,230,0,.35));
-    }
-    .loader-dogs span:nth-child(2){animation-delay:.15s}
-    .loader-dogs span:nth-child(3){animation-delay:.30s}
-    .loader-dogs span:nth-child(4){animation-delay:.45s}
-    @keyframes wag{
-      0%{
-        transform:translateY(0) rotate(-10deg) scale(1);
-      }
-      25%{
-        transform:translateY(-10px) rotate(10deg) scale(1.08);
-      }
-      50%{
-        transform:translateY(0) rotate(-8deg) scale(1);
-      }
-      75%{
-        transform:translateY(-14px) rotate(10deg) scale(1.12);
-      }
-      100%{
-        transform:translateY(0) rotate(-10deg) scale(1);
-      }
-    }
-    .loader-text{font-size:var(--text-sm);letter-spacing:.18em;text-transform:uppercase;color:#d7cfb1}
-    @keyframes bounce{from{transform:translateY(0);opacity:.5}to{transform:translateY(-10px);opacity:1}}
-    .card{
-      width:min(100%, 30rem);
-      background:var(--color-surface);
-      backdrop-filter:blur(16px);
-      border:1px solid var(--color-border);
-      border-radius:var(--radius-xl);
-      box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-    .photo-wrap{
-      position:relative;
-      aspect-ratio: 4 / 3;
-      background:linear-gradient(135deg, var(--color-primary-soft), transparent 60%), var(--color-surface-2);
-    }
-    .photo-wrap img{width:100%;height:100%;object-fit:cover}
-    .badge{
-      position:absolute;left:1rem;bottom:1rem;padding:.55rem .85rem;border-radius:var(--radius-full);
-      background:rgba(16,16,16,.7);color:#fff9ea;font-size:var(--text-sm);font-weight:700;
-      border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px);
-    }
-    .content{padding:var(--space-8)}
-    h1{font-family:var(--font-display);font-size:var(--text-xl);line-height:1;letter-spacing:-.04em}
-    p{margin-top:var(--space-3);color:var(--color-text-muted)}
-    .links,.form-grid{display:grid;gap:var(--space-3);margin-top:var(--space-8)}
-    .link,.toggle-btn,.send-btn{
-      min-height:56px;display:flex;align-items:center;justify-content:space-between;gap:1rem;
-      padding:1rem 1.1rem;background:var(--color-surface-2);border:1px solid var(--color-border);
-      border-radius:var(--radius-lg);transition:transform .18s ease, border-color .18s ease, background .18s ease, opacity .25s ease, grid-template-rows .28s ease;
-    }
-    .link:hover,.toggle-btn:hover,.send-btn:hover{transform:translateY(-2px);border-color:rgba(255,230,0,.52);background:var(--color-primary-soft)}
-    .link-main,.toggle-main{display:flex;align-items:center;gap:.9rem}
-    .icon{
-      width:2.5rem;height:2.5rem;border-radius:999px;display:grid;place-items:center;background:var(--color-primary-soft);color:var(--color-primary);flex:none;
-    }
-    .label{font-weight:700}
-    .hint{font-size:var(--text-sm);color:var(--color-text-muted)}
-    .arrow{font-size:1.1rem;color:var(--color-text-muted)}
-    
-    .toggle-btn{
-      width:100%;
-      justify-content:space-between;
-    }
-    .toggle-main{
-      flex:1;
-    }
-    .toggle-btn .label{
-      display:block;
-      line-height:1.2;
-    }
+    body{min-height:100dvh;display:grid;place-items:center;padding:1.25rem;font-family:var(--font-body);font-size:var(--text-base);color:var(--color-text);background:radial-gradient(circle at 14% 18%, rgba(150,150,150,.38), transparent 26%),radial-gradient(circle at 85% 16%, rgba(255,230,0,.34), transparent 22%),radial-gradient(circle at 78% 82%, rgba(255,230,0,.28), transparent 24%),linear-gradient(135deg, rgba(255,230,0,.24) 0%, rgba(255,230,0,0) 38%),linear-gradient(120deg, rgba(40,40,40,.44) 0%, rgba(40,40,40,0) 46%),var(--color-bg)}
+    img,svg{display:block;max-width:100%;height:auto}a{text-decoration:none;color:inherit}input,textarea,button{font:inherit;color:inherit}
+    .loader{position:fixed;inset:0;display:grid;place-items:center;z-index:9999;background:radial-gradient(circle at 50% 30%, rgba(255,230,0,.18), transparent 24%),linear-gradient(135deg, rgba(255,230,0,.10), rgba(255,230,0,0) 42%),#090909;transition:opacity .55s ease, visibility .55s ease}.loader.is-hidden{opacity:0;visibility:hidden}.loader-inner{display:grid;justify-items:center;gap:1rem}.loader-logo{font-family:var(--font-display);font-size:clamp(2.5rem, 8vw, 4.75rem);letter-spacing:-.06em;color:#fff9e0}.loader-dogs{display:flex;gap:.45rem;justify-content:center;align-items:center;font-size:1.8rem}.loader-dogs span{display:inline-block;animation:wag 1.35s ease-in-out infinite;transform-origin:55% 75%;filter:drop-shadow(0 0 8px rgba(255,230,0,.35))}.loader-dogs span:nth-child(2){animation-delay:.15s}.loader-dogs span:nth-child(3){animation-delay:.30s}.loader-dogs span:nth-child(4){animation-delay:.45s}@keyframes wag{0%{transform:translateY(0) rotate(-10deg) scale(1)}25%{transform:translateY(-10px) rotate(10deg) scale(1.08)}50%{transform:translateY(0) rotate(-8deg) scale(1)}75%{transform:translateY(-14px) rotate(10deg) scale(1.12)}100%{transform:translateY(0) rotate(-10deg) scale(1)}}
+    .loader-text{font-size:var(--text-sm);letter-spacing:.18em;text-transform:uppercase;color:#d7cfb1}@keyframes bounce{from{transform:translateY(0);opacity:.5}to{transform:translateY(-10px);opacity:1}}
+    .card{width:min(100%, 30rem);background:var(--color-surface);backdrop-filter:blur(16px);border:1px solid var(--color-border);border-radius:var(--radius-xl);box-shadow:var(--shadow);overflow:hidden}
+    .photo-wrap{position:relative;aspect-ratio: 4 / 3;background:linear-gradient(135deg, var(--color-primary-soft), transparent 60%), var(--color-surface-2)}.photo-wrap img{width:100%;height:100%;object-fit:cover}
+    .badge{position:absolute;left:1rem;bottom:1rem;padding:.55rem .85rem;border-radius:var(--radius-full);background:rgba(16,16,16,.7);color:#fff9ea;font-size:var(--text-sm);font-weight:700;border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px)}
+    .content{padding:var(--space-8)}h1{font-family:var(--font-display);font-size:var(--text-xl);line-height:1;letter-spacing:-.04em}p{margin-top:var(--space-3);color:var(--color-text-muted)}.links,.form-grid{display:grid;gap:var(--space-3);margin-top:var(--space-8)}
+    .link,.toggle-btn,.send-btn{min-height:56px;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.1rem;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);transition:transform .18s ease, border-color .18s ease, background .18s ease, opacity .25s ease, grid-template-rows .28s ease}.link:hover,.toggle-btn:hover,.send-btn:hover{transform:translateY(-2px);border-color:rgba(255,230,0,.52);background:var(--color-primary-soft)}
+    .link-main,.toggle-main{display:flex;align-items:center;gap:.9rem}.icon{width:2.5rem;height:2.5rem;border-radius:999px;display:grid;place-items:center;background:var(--color-primary-soft);color:var(--color-primary);flex:none}.label{font-weight:700}.hint{font-size:var(--text-sm);color:var(--color-text-muted)}.arrow{font-size:1.1rem;color:var(--color-text-muted)}
+    .toggle-btn{width:100%;justify-content:space-between}.toggle-main{flex:1}.toggle-btn .label{display:block;line-height:1.2}
+    .message-box{margin-top:var(--space-10);padding-top:var(--space-8);border-top:1px solid var(--color-border)}.message-box h2{font-family:var(--font-display);font-size:var(--text-lg);letter-spacing:-.03em}
+    .field{display:grid;gap:.55rem}.field label{font-size:var(--text-sm);font-weight:700}.field input,.field textarea{width:100%;padding:1rem 1rem;border-radius:1rem;border:1px solid var(--color-border);background:var(--color-surface-2)}.field textarea{min-height:130px;resize:vertical}.send-btn{cursor:pointer;font-weight:700}
+    .form-shell{display:grid;grid-template-rows:0fr;transition:grid-template-rows .32s ease}.form-shell.is-open{grid-template-rows:1fr}.form-shell-inner{overflow:hidden}.form-card{margin-top:var(--space-4);padding:var(--space-5);border-radius:var(--radius-lg);background:rgba(255,255,255,.02);border:1px solid var(--color-border)}.status{min-height:1.4em;font-size:var(--text-sm);color:var(--color-text-muted)}.footer{padding:0 var(--space-8) var(--space-8);font-size:var(--text-sm);color:var(--color-text-muted)}
+    .toast{position:fixed;top:24px;right:24px;display:flex;align-items:center;gap:14px;min-width:320px;max-width:380px;padding:16px 18px;border-radius:22px;background:linear-gradient(180deg,rgba(50,50,50,.82),rgba(25,25,25,.86));backdrop-filter:blur(22px) saturate(170%);-webkit-backdrop-filter:blur(22px) saturate(170%);border:1px solid rgba(255,255,255,.14);box-shadow:0 18px 45px rgba(0,0,0,.42),0 0 22px rgba(255,230,0,.08);color:#fff;transform:translateX(140%);opacity:0;transition:transform .45s cubic-bezier(.22,.9,.27,1),opacity .35s;z-index:99999}.toast.show{transform:translateX(0);opacity:1}.toast-icon{font-size:2rem;animation:toastDog 1s ease-in-out infinite}@keyframes toastDog{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg) translateY(-3px)}}.toast-content{flex:1}.toast-title{font-weight:700;margin-bottom:4px}.toast-message{color:#ddd;font-size:.92rem}.toast-close{background:none;border:none;color:#ddd;cursor:pointer;font-size:1rem}.toast-close:hover{color:#FFE600;transform:scale(1.15)}
+    .card{animation:cardReveal .7s cubic-bezier(.22,1,.36,1) both;animation-delay:2.05s;opacity:0}@keyframes cardReveal{from{opacity:0;transform:translateY(22px) scale(.97);filter:blur(8px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+    .card-glow{position:fixed;left:50%;top:50%;width:950px;height:620px;transform:translate(-50%,-50%);pointer-events:none;z-index:0;background:radial-gradient(ellipse at center, rgba(255,230,0,.42) 0%, rgba(255,230,0,.22) 30%, rgba(255,210,0,.10) 55%, transparent 78%);filter:blur(90px);transition:filter .35s ease, opacity .35s ease;opacity:1}.card{position:relative;z-index:2}.card:hover{box-shadow:0 24px 60px rgba(0,0,0,.45),0 0 80px rgba(255,230,0,.14)}
 
-    .message-box{margin-top:var(--space-10);padding-top:var(--space-8);border-top:1px solid var(--color-border)}
-    .message-box h2{font-family:var(--font-display);font-size:var(--text-lg);letter-spacing:-.03em}
-    .field{display:grid;gap:.55rem}
-    .field label{font-size:var(--text-sm);font-weight:700}
-    .field input,.field textarea{
-      width:100%;padding:1rem 1rem;border-radius:1rem;border:1px solid var(--color-border);
-      background:var(--color-surface-2);
-    }
-    .field textarea{min-height:130px;resize:vertical}
-    .send-btn{cursor:pointer;font-weight:700}
-    .form-shell{
-      display:grid;
-      grid-template-rows:0fr;
-      transition:grid-template-rows .32s ease;
-    }
-    .form-shell.is-open{grid-template-rows:1fr}
-    .form-shell-inner{overflow:hidden}
-    .form-card{margin-top:var(--space-4);padding:var(--space-5);border-radius:var(--radius-lg);background:rgba(255,255,255,.02);border:1px solid var(--color-border)}
-    .status{min-height:1.4em;font-size:var(--text-sm);color:var(--color-text-muted)}
-    .footer{padding:0 var(--space-8) var(--space-8);font-size:var(--text-sm);color:var(--color-text-muted)}
-    
-    .toast{
-      position:fixed;top:24px;right:24px;display:flex;align-items:center;gap:14px;
-      min-width:320px;max-width:380px;padding:16px 18px;border-radius:22px;
-      background:linear-gradient(180deg,rgba(50,50,50,.82),rgba(25,25,25,.86));
-      backdrop-filter:blur(22px) saturate(170%);
-      -webkit-backdrop-filter:blur(22px) saturate(170%);
-      border:1px solid rgba(255,255,255,.14);
-      box-shadow:0 18px 45px rgba(0,0,0,.42),0 0 22px rgba(255,230,0,.08);
-      color:#fff;transform:translateX(140%);opacity:0;
-      transition:transform .45s cubic-bezier(.22,.9,.27,1),opacity .35s;
-      z-index:99999;
-    }
-    .toast.show{transform:translateX(0);opacity:1;}
-    .toast-icon{font-size:2rem;animation:toastDog 1s ease-in-out infinite;}
-    @keyframes toastDog{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg) translateY(-3px)}}
-    .toast-content{flex:1}
-    .toast-title{font-weight:700;margin-bottom:4px}
-    .toast-message{color:#ddd;font-size:.92rem}
-    .toast-close{background:none;border:none;color:#ddd;cursor:pointer;font-size:1rem}
-    .toast-close:hover{color:#FFE600;transform:scale(1.15)}
-
-    
-    .card{
-      animation:cardReveal .7s cubic-bezier(.22,1,.36,1) both;
-      animation-delay:2.05s;
-      opacity:0;
-    }
-    @keyframes cardReveal{
-      from{
-        opacity:0;
-        transform:translateY(22px) scale(.97);
-        filter:blur(8px);
-      }
-      to{
-        opacity:1;
-        transform:translateY(0) scale(1);
-        filter:blur(0);
-      }
-    }
-
-    
-    .card-glow{
-      position:fixed;
-      left:50%;
-      top:50%;
-      width:950px;
-      height:620px;
-      transform:translate(-50%,-50%);
-      pointer-events:none;
-      z-index:0;
-      background:
-        radial-gradient(ellipse at center,
-          rgba(255,230,0,.42) 0%,
-          rgba(255,230,0,.22) 30%,
-          rgba(255,210,0,.10) 55%,
-          transparent 78%);
-      filter:blur(90px);
-      transition:filter .35s ease, opacity .35s ease;
-      opacity:1;
-    }
-
-    .card{
-      position:relative;
-      z-index:2;
-    }
-
-    .card:hover + .card-glow,
-    .card:hover ~ .card-glow{}
-
-    .card:hover{
-      box-shadow:
-        0 24px 60px rgba(0,0,0,.45),
-        0 0 80px rgba(255,230,0,.14);
-    }
-
+    #pet-widget{margin:24px 0 0;padding:0;background:linear-gradient(180deg, rgba(16,14,0,.96), rgba(8,7,0,.98));border:1px solid rgba(255,230,90,.34);border-radius:24px;overflow:hidden;box-shadow:0 0 0 1px rgba(255,230,90,.08),0 0 28px rgba(255,230,90,.12),inset 0 0 24px rgba(255,230,90,.07);color:#ffe66b;position:relative;isolation:isolate}
+    #pet-widget:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.04),transparent 30%,transparent 70%,rgba(255,255,255,.02));pointer-events:none}
+    #pet-widget .pet-top{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid rgba(255,230,90,.18);background:rgba(255,230,90,.03)}
+    #pet-widget .pet-title{font-family:monospace;font-size:14px;letter-spacing:.18em;text-transform:uppercase}
+    #pet-widget .pet-badge{font-family:monospace;font-size:12px;opacity:.84}
+    #pet-widget .pet-screen{margin:14px 14px 10px;border-radius:20px;border:1px solid rgba(255,230,90,.24);background:radial-gradient(circle at 50% 20%, rgba(255,230,90,.14), rgba(0,0,0,.12) 45%, rgba(0,0,0,.5));box-shadow:inset 0 0 24px rgba(255,230,90,.10),0 0 16px rgba(255,230,90,.05);padding:12px;position:relative;overflow:hidden}
+    #pet-widget .pet-screen:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(to bottom, rgba(255,255,255,.04) 0, rgba(255,255,255,.04) 1px, transparent 1px, transparent 4px);mix-blend-mode:soft-light;pointer-events:none;border-radius:20px}
+    #pet-canvas{width:100%;height:auto;display:block;image-rendering:pixelated;image-rendering:crisp-edges;border-radius:14px;filter:drop-shadow(0 0 10px rgba(255,230,90,.18))}
+    #pet-widget .pet-message{min-height:20px;padding:0 16px 10px;font-family:monospace;font-size:13px;color:#fff0a0;text-shadow:0 0 8px rgba(255,230,90,.2)}
+    #pet-widget .pet-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:0 14px 14px}
+    #pet-widget .stat{background:rgba(255,230,90,.04);border:1px solid rgba(255,230,90,.12);border-radius:14px;padding:8px 9px}
+    #pet-widget .stat-row{display:flex;justify-content:space-between;gap:8px;font-family:monospace;font-size:12px;margin-bottom:6px}
+    #pet-widget .bar{height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,230,90,.08)}
+    #pet-widget .bar > span{display:block;height:100%;width:50%;background:linear-gradient(90deg,#ffe66b,#c89d24);box-shadow:0 0 10px rgba(255,230,90,.35)}
+    #pet-widget .pet-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:0 14px 16px}
+    #pet-widget .pet-actions button{background:linear-gradient(180deg,rgba(255,230,90,.16),rgba(255,230,90,.07));border:1px solid rgba(255,230,90,.18);color:#fff2ad;border-radius:12px;padding:10px 6px;font:600 12px/1 monospace;cursor:pointer;box-shadow:inset 0 0 0 1px rgba(0,0,0,.25)}
+    #pet-widget .pet-actions button:hover{transform:translateY(-1px);box-shadow:0 0 16px rgba(255,230,90,.12),inset 0 0 0 1px rgba(0,0,0,.25)}
+    #pet-widget .pet-footer{display:flex;justify-content:space-between;gap:10px;padding:0 16px 16px;font-family:monospace;font-size:12px;opacity:.86;flex-wrap:wrap}
+    @media (max-width:540px){#pet-widget .pet-stats{grid-template-columns:1fr}#pet-widget .pet-actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media (prefers-reduced-motion: reduce){.link,.toggle-btn,.send-btn,.form-shell,.loader{transition:none}.loader-dogs span,.card{animation:none;opacity:1}}
-  </style>
+  
+.pet-section{
+margin-top:2.5rem;
+padding-top:2rem;
+border-top:1px solid var(--color-border);
+}
+.pet-section h2{
+font-family:var(--font-display);
+font-size:var(--text-lg);
+letter-spacing:-.03em;
+margin-bottom:.4rem;
+}
+.pet-section>p{
+color:var(--color-text-muted);
+margin-bottom:1rem;
+}
+</style>
 </head>
 <body>
-  <div class="loader" id="pageLoader" aria-hidden="true">
-    <div class="loader-inner">
-      <div class="loader-logo">Pobar</div>
-      <div class="loader-dogs"><span>🐕</span><span>🐕</span><span>🐕</span><span>🐕</span></div>
-      <div class="loader-text">Boop activated</div>
-    </div>
-  </div>
+<div aria-hidden="true" class="loader" id="pageLoader">
+<div class="loader-inner">
+<div class="loader-logo">Pobar</div>
+<div class="loader-dogs"><span>🐕</span><span>🐕</span><span>🐕</span><span>🐕</span></div>
+<div class="loader-text">Boop activated</div>
+</div>
+</div>
+<div aria-hidden="true" class="card-glow"></div>
+<main aria-label="Pobar social landing page" class="card">
+<section class="photo-wrap">
+<img alt="Hlavní fotografie pro profil Pobar" height="900" loading="eager" src="a9FE.png" width="1200"/>
+<span class="badge">Pobar</span>
+</section>
+<section class="content">
+<h1>Pobar</h1>
+<p>Awooooooooooooooo!🐕</p>
+<div class="links">
+<a aria-label="Telegram" class="link" href="https://t.me/pobar9" rel="noopener noreferrer" target="_blank">
+<span class="link-main"><span aria-hidden="true" class="icon"><svg fill="currentColor" height="20" viewbox="0 0 24 24" width="20"><path d="M21.4 4.6 18.2 19c-.2 1-.8 1.3-1.6.8l-4.4-3.3-2.1 2c-.2.2-.4.4-.9.4l.3-4.5 8.2-7.4c.4-.3-.1-.5-.6-.2L7 13.1l-4.3-1.3c-.9-.3-.9-.9.2-1.3L19.8 4c.8-.3 1.5.2 1.6.6Z"></path></svg></span><span><span class="label">Telegram</span><br/><span class="hint">Personal contact</span></span></span>
+<span class="arrow">↗</span>
+</a>
+<a aria-label="Discord" class="link" href="https://discord.gg/pK3yUb5pvg" rel="noopener noreferrer" target="_blank">
+<span class="link-main"><span aria-hidden="true" class="icon"><svg fill="currentColor" height="20" viewbox="0 0 24 24" width="20"><path d="M20.3 4.4A16.8 16.8 0 0 0 16.2 3l-.2.4c1.6.4 2.3 1 2.3 1a13.5 13.5 0 0 0-4.2-1.3 14.6 14.6 0 0 0-4.3 0A13.5 13.5 0 0 0 5.6 4.4s.7-.6 2.3-1L7.7 3a16.8 16.8 0 0 0-4.1 1.4C1 8.2.5 12 1 15.7a16.9 16.9 0 0 0 5 2.5l1.1-1.8c-.6-.2-1.1-.5-1.6-.9l.4-.3c3 1.4 6.2 1.4 9.1 0l.4.3c-.5.4-1 .7-1.6.9l1.1 1.8a16.9 16.9 0 0 0 5-2.5c.7-4.2-.2-7.9-1.6-11.3ZM9.5 13.4c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Zm5 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Z"></path></svg></span><span><span class="label">Discord</span><br/><span class="hint">Discord server</span></span></span>
+<span class="arrow">↗</span>
+</a>
+<a aria-label="Instagram" class="link" href="https://instagram.com/pobar_9" rel="noopener noreferrer" target="_blank">
+<span class="link-main"><span aria-hidden="true" class="icon"><svg fill="none" height="20" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="20"><rect height="18" rx="5" width="18" x="3" y="3"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" fill="currentColor" r="1" stroke="none"></circle></svg></span><span><span class="label">Instagram</span><br/><span class="hint">Instagram photos</span></span></span>
+<span class="arrow">↗</span>
+</a>
+<a aria-label="Telegram gallery" class="link" href="https://t.me/+OP50O4vq1x5kNDk0" rel="noopener noreferrer" target="_blank">
+<span class="link-main"><span aria-hidden="true" class="icon"><svg fill="none" height="20" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="20"><rect height="14" rx="2" width="18" x="3" y="5"></rect><circle cx="8.5" cy="10" fill="currentColor" r="1.5" stroke="none"></circle><path d="m21 15-4.5-4.5L10 17l-2.5-2.5L3 19"></path></svg></span><span><span class="label">Telegram galerie</span><br/><span class="hint">Personal gallery</span></span></span>
+<span class="arrow">↗</span>
+</a>
+</div>
 
-  <div class="card-glow" aria-hidden="true"></div>
-
-  <main class="card" aria-label="Pobar social landing page">
-    <section class="photo-wrap">
-      <img src="a9FE.png" alt="Hlavní fotografie pro profil Pobar" width="1200" height="900" loading="eager">
-      <span class="badge">Pobar</span>
-    </section>
-    <section class="content">
-      <h1>Pobar</h1>
-      <p>Awooooooooooooooo!🐕</p>
-      <div class="links">
-        <a class="link" href="https://t.me/pobar9" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
-          <span class="link-main"><span class="icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M21.4 4.6 18.2 19c-.2 1-.8 1.3-1.6.8l-4.4-3.3-2.1 2c-.2.2-.4.4-.9.4l.3-4.5 8.2-7.4c.4-.3-.1-.5-.6-.2L7 13.1l-4.3-1.3c-.9-.3-.9-.9.2-1.3L19.8 4c.8-.3 1.5.2 1.6.6Z"/></svg></span><span><span class="label">Telegram</span><br><span class="hint">Personal contact</span></span></span>
-          <span class="arrow">↗</span>
-        </a>
-        <a class="link" href="https://discord.gg/pK3yUb5pvg" target="_blank" rel="noopener noreferrer" aria-label="Discord">
-          <span class="link-main"><span class="icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.3 4.4A16.8 16.8 0 0 0 16.2 3l-.2.4c1.6.4 2.3 1 2.3 1a13.5 13.5 0 0 0-4.2-1.3 14.6 14.6 0 0 0-4.3 0A13.5 13.5 0 0 0 5.6 4.4s.7-.6 2.3-1L7.7 3a16.8 16.8 0 0 0-4.1 1.4C1 8.2.5 12 1 15.7a16.9 16.9 0 0 0 5 2.5l1.1-1.8c-.6-.2-1.1-.5-1.6-.9l.4-.3c3 1.4 6.2 1.4 9.1 0l.4.3c-.5.4-1 .7-1.6.9l1.1 1.8a16.9 16.9 0 0 0 5-2.5c.7-4.2-.2-7.9-1.6-11.3ZM9.5 13.4c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Zm5 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2Z"/></svg></span><span><span class="label">Discord</span><br><span class="hint">Discord server</span></span></span>
-          <span class="arrow">↗</span>
-        </a>
-        <a class="link" href="https://instagram.com/pobar_9" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-          <span class="link-main"><span class="icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></span><span><span class="label">Instagram</span><br><span class="hint">Instagram photos</span></span></span>
-          <span class="arrow">↗</span>
-        </a>
-        <a class="link" href="https://t.me/+OP50O4vq1x5kNDk0" target="_blank" rel="noopener noreferrer" aria-label="Telegram gallery">
-          <span class="link-main"><span class="icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor" stroke="none"/><path d="m21 15-4.5-4.5L10 17l-2.5-2.5L3 19"/></svg></span><span><span class="label">Telegram galerie</span><br><span class="hint">Personal gallery</span></span></span>
-          <span class="arrow">↗</span>
-        </a>
-      </div>
-
-      <section class="message-box" aria-labelledby="discord-message-title">
-        <h2 id="discord-message-title">Discord message</h2>
-        <p>Tell me your deepest secret. :D🐕</p>
-        <p></p>
-
-        <button class="toggle-btn" type="button" id="toggleMessage" aria-expanded="false" aria-controls="formShell">
-  <span class="toggle-main">
-    <span class="icon" aria-hidden="true">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    </span>
-    <span class="label">Send me a message</span>
-  </span>
-  <span class="arrow" id="toggleArrow">▾</span>
-</button>
-
-        <div class="form-shell" id="formShell">
-          <div class="form-shell-inner">
-            <div class="form-card">
-              <form id="discordForm" class="form-grid" novalidate>
-                <div class="field">
-                  <label for="senderName">Name *</label>
-                  <input id="senderName" name="name" type="text" placeholder="For ex. Paws" required>
-                </div>
-                <div class="field">
-                  <label for="senderContact">Contact</label>
-                  <input id="senderContact" name="contact" type="text" placeholder="Discord, Telegram or nothing" required>
-                </div>
-                <div class="field">
-                  <label for="senderMessage">Message *</label>
-                  <textarea id="senderMessage" name="message" placeholder="Write something…" required></textarea>
-                </div>
-                <button class="send-btn" type="submit">Send</button>
-                <p class="status" id="formStatus" aria-live="polite"></p>
-              </form>
-            </div>
-          </div>
-        </div>
-      </section>
-    </section>
-  </main>
-
-  <script src="./config.js"></script>
-  <script>
+<section aria-labelledby="discord-message-title" class="message-box">
+<h2 id="discord-message-title">Discord message</h2>
+<p>Tell me your deepest secret 🐕</p><p></p>
+<button aria-controls="formShell" aria-expanded="false" class="toggle-btn" id="toggleMessage" type="button"><span class="toggle-main"><span aria-hidden="true" class="icon"><svg fill="none" height="20" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="20"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span><span class="label">Send me a message</span></span><span class="arrow" id="toggleArrow">▾</span></button>
+<div class="form-shell" id="formShell"><div class="form-shell-inner"><div class="form-card"><form class="form-grid" id="discordForm" novalidate=""><div class="field"><label for="senderName">Name *</label><input id="senderName" name="name" placeholder="For ex. Paws" required="" type="text"/></div><div class="field"><label for="senderContact">Contact</label><input id="senderContact" name="contact" placeholder="Discord, Telegram or nothing" required="" type="text"/></div><div class="field"><label for="senderMessage">Message *</label><textarea id="senderMessage" name="message" placeholder="Write something…" required=""></textarea></div><button class="send-btn" type="submit">Send</button><p aria-live="polite" class="status" id="formStatus"></p></form></div></div></div>
+</section><section class="pet-section"><h2>🐕 Po-barky</h2><p>Take care of your virtual companion.</p><section aria-label="Tamagotchi pet widget" id="pet-widget">
+<div class="pet-top"><div class="pet-title">Po-barky Pet</div><div class="pet-badge" id="pet-age-badge">Lv. 1</div></div>
+<div class="pet-screen"><canvas height="180" id="pet-canvas" width="320"></canvas></div>
+<div class="pet-message" id="pet-message">Woof!</div>
+<div class="pet-stats">
+<div class="stat"><div class="stat-row"><span>❤️ Hunger</span><span id="stat-hunger-text"></span></div><div class="bar"><span id="stat-hunger-bar"></span></div></div>
+<div class="stat"><div class="stat-row"><span>😊 Happiness</span><span id="stat-happiness-text"></span></div><div class="bar"><span id="stat-happiness-bar"></span></div></div>
+<div class="stat"><div class="stat-row"><span>⚡ Energy</span><span id="stat-energy-text"></span></div><div class="bar"><span id="stat-energy-bar"></span></div></div>
+<div class="stat"><div class="stat-row"><span>🧼 Cleanliness</span><span id="stat-cleanliness-text"></span></div><div class="bar"><span id="stat-cleanliness-bar"></span></div></div>
+<div class="stat"><div class="stat-row"><span>🎂 Age</span><span id="stat-age-text"></span></div><div class="bar"><span id="stat-age-bar"></span></div></div>
+<div class="stat"><div class="stat-row"><span>⭐ Level</span><span id="stat-level-text"></span></div><div class="bar"><span id="stat-level-bar"></span></div></div>
+</div>
+<div class="pet-actions">
+<button id="pet-feed-btn">🍖 Feed</button><button id="pet-play-btn">🎾 Play</button><button id="pet-sleep-btn">😴 Sleep</button><button id="pet-clean-btn">🧹 Clean</button>
+</div>
+<div class="pet-footer"><span id="pet-xp-text">XP 0</span><span id="pet-achievements-text">Achievements 0</span><span id="pet-feeds-text">Feeds 0</span><span id="pet-days-text">Days 0</span></div>
+</section></section>
+</section>
+</main>
+<script src="./config.js"></script>
+<script>
     (() => {
       const loader = document.getElementById('pageLoader');
       const hideLoader = () => loader.classList.add('is-hidden');
@@ -345,77 +169,104 @@
       const toggleButton = document.getElementById('toggleMessage');
       const formShell = document.getElementById('formShell');
       const toggleArrow = document.getElementById('toggleArrow');
-      toggleButton.addEventListener('click', () => {
-        const isOpen = formShell.classList.toggle('is-open');
-        toggleButton.setAttribute('aria-expanded', String(isOpen));
-        toggleArrow.textContent = isOpen ? '▴' : '▾';
-      });
+      toggleButton.addEventListener('click', () => { const isOpen = formShell.classList.toggle('is-open'); toggleButton.setAttribute('aria-expanded', String(isOpen)); toggleArrow.textContent = isOpen ? '▴' : '▾'; });
 
-      
       let toastTimeout;
-      function showToast(message, success=true){
-        const toast=document.getElementById('toast');
-        toast.querySelector('.toast-message').textContent=message;
-        toast.querySelector('.toast-icon').textContent=success?'🐕':'⚠️';
-        toast.querySelector('.toast-title').textContent=success?'Woof!':'Oops!';
-        toast.classList.add('show');
-        clearTimeout(toastTimeout);
-        toastTimeout=setTimeout(hideToast,5000);
-      }
-      function hideToast(){
-        document.getElementById('toast').classList.remove('show');
-      }
+      function showToast(message, success=true){ const toast=document.getElementById('toast'); toast.querySelector('.toast-message').textContent=message; toast.querySelector('.toast-icon').textContent=success?'🐕':'⚠️'; toast.querySelector('.toast-title').textContent=success?'Woof!':'Oops!'; toast.classList.add('show'); clearTimeout(toastTimeout); toastTimeout=setTimeout(hideToast,5000); }
+      function hideToast(){ document.getElementById('toast').classList.remove('show'); }
 
       const form = document.getElementById('discordForm');
       const status = document.getElementById('formStatus');
-      form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const webhookUrl = 'https://discord.com/api/webhooks/1528690965563310130/1Kc_RtJd1nOLsmsapwi0q95Yy8Y-gBZ-Jz0SzBCZ3gvQHyC_Il8AiQD6dw00T4kq-muq';
-        if (!webhookUrl || webhookUrl.includes('PASTE')) {
-          status.textContent = 'Nejdřív doplň webhook do souboru config.js.';
-          return;
-        }
-        const data = new FormData(form);
-        const payload = {
-          embeds: [{
-            title: 'Nová zpráva z webu Pobar',
-            color: 16770560,
-            fields: [
-              { name: 'Jméno / přezdívka', value: String(data.get('name') || '-').slice(0, 1024) },
-              { name: 'Kontakt', value: String(data.get('contact') || '-').slice(0, 1024) },
-              { name: 'Zpráva', value: String(data.get('message') || '-').slice(0, 1024) }
-            ],
-            footer: { text: 'Odesláno z webu Pobar' },
-            timestamp: new Date().toISOString()
-          }]
-        };
-        status.textContent = 'Sending message…';
-        try {
-          const response = await fetch(webhookUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-          if (!response.ok) throw new Error('Webhook request failed');
-          form.reset();
-          showToast('Your message has been sent successfully. Thanks! 🐾', true);
-          status.textContent='';
-        } catch (error) {
-          showToast('Something went wrong. Please try again.', false);
-          status.textContent='';
-        }
-      });
+      form.addEventListener('submit', async (event) => { event.preventDefault(); const webhookUrl = 'https://discord.com/api/webhooks/1528690965563310130/1Kc_RtJd1nOLsmsapwi0q95Yy8Y-gBZ-Jz0SzBCZ3gvQHyC_Il8AiQD6dw00T4kq-muq'; if (!webhookUrl || webhookUrl.includes('PASTE')) { status.textContent = 'Nejdřív doplň webhook do souboru config.js.'; return; } const data = new FormData(form); const payload = { embeds: [{ title: 'Nová zpráva z webu Pobar', color: 16770560, fields: [ { name: 'Jméno / přezdívka', value: String(data.get('name') || '-').slice(0, 1024) }, { name: 'Kontakt', value: String(data.get('contact') || '-').slice(0, 1024) }, { name: 'Zpráva', value: String(data.get('message') || '-').slice(0, 1024) } ], footer: { text: 'Odesláno z webu Pobar' }, timestamp: new Date().toISOString() }] }; status.textContent = 'Sending message…'; try { const response = await fetch(webhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) throw new Error('Webhook request failed'); form.reset(); showToast('Your message has been sent successfully. Thanks! 🐾', true); status.textContent=''; } catch (error) { showToast('Something went wrong. Please try again.', false); status.textContent=''; } });
+
+      const STORAGE_KEY='pobar_tamagotchi_v1';
+      const canvas=document.getElementById('pet-canvas'); const ctx=canvas.getContext('2d');
+      const ui={message:document.getElementById('pet-message'),ageBadge:document.getElementById('pet-age-badge'),xpText:document.getElementById('pet-xp-text'),achievementsText:document.getElementById('pet-achievements-text'),feedsText:document.getElementById('pet-feeds-text'),daysText:document.getElementById('pet-days-text'),bars:{hunger:document.getElementById('stat-hunger-bar'),happiness:document.getElementById('stat-happiness-bar'),energy:document.getElementById('stat-energy-bar'),cleanliness:document.getElementById('stat-cleanliness-bar'),age:document.getElementById('stat-age-bar'),level:document.getElementById('stat-level-bar')},texts:{hunger:document.getElementById('stat-hunger-text'),happiness:document.getElementById('stat-happiness-text'),energy:document.getElementById('stat-energy-text'),cleanliness:document.getElementById('stat-cleanliness-text'),age:document.getElementById('stat-age-text'),level:document.getElementById('stat-level-text')},buttons:{feed:document.getElementById('pet-feed-btn'),play:document.getElementById('pet-play-btn'),sleep:document.getElementById('pet-sleep-btn'),clean:document.getElementById('pet-clean-btn')}};
+      let pet=null,lastFrame=0,lastTick=0;
+      function basePet(){return{hunger:78,happiness:72,energy:80,cleanliness:90,age:0,level:1,xp:0,feeds:0,days:0,achievementCount:0,lastVisit:Date.now(),lastAction:Date.now(),lastRandom:Date.now(),message:'Woof!',state:'idle',blinkUntil:0,dirty:false,actionLock:0}}
+      function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
+      function xpToLevel(){return Math.floor(pet.xp/100)+1}
+      function applyAchievements(){const a=[pet.feeds>=1,pet.feeds>=10,pet.days>=1,pet.level>=5,pet.cleanliness>=95&&pet.happiness>=95].filter(Boolean).length;pet.achievementCount=a;pet.level=xpToLevel()}
+      function setMessage(text){pet.message=text;ui.message.textContent=text}
+      function savePet(){localStorage.setItem(STORAGE_KEY,JSON.stringify(pet))}
+      function loadPet(){const raw=localStorage.getItem(STORAGE_KEY);pet=raw?Object.assign(basePet(),JSON.parse(raw)):basePet();const now=Date.now();const elapsed=Math.max(0,now-(pet.lastVisit||now));const minutes=elapsed/60000;const hours=elapsed/3600000;pet.hunger=clamp(pet.hunger+minutes*1.4,0,100);pet.energy=clamp(pet.energy-hours*7,0,100);pet.happiness=clamp(pet.happiness-minutes*0.5-hours*1.2,0,100);pet.cleanliness=clamp(pet.cleanliness-minutes*0.8-hours*1.0,0,100);pet.age=(pet.age||0)+hours/24;pet.days=(pet.days||0)+elapsed/86400000;pet.lastVisit=now;setMessage(now-pet.lastAction>60000?"I'm back!":"Woof!");applyAchievements();savePet()}
+      function addXP(v){pet.xp=Math.max(0,pet.xp+v);pet.level=xpToLevel();applyAchievements()}
+      function feedPet(){
+if(pet.hunger<50){setMessage("I'm not hungry. 🐕");return;}
+pet.hunger=clamp(pet.hunger-28,0,100);pet.happiness=clamp(pet.happiness+8,0,100);pet.energy=clamp(pet.energy+2,0,100);pet.feeds++;pet.state='eat';pet.actionLock=2500;pet.lastAction=Date.now();addXP(12);setMessage("Yummy! 🍖");savePet()}
+      function playPet(){
+if(pet.energy<40){setMessage("I'm too tired... 😴");return;}
+if(pet.hunger>60){setMessage("I'm hungry first! 🍖");return;}
+pet.happiness=clamp(pet.happiness+20,0,100);pet.energy=clamp(pet.energy-14,0,100);pet.hunger=clamp(pet.hunger+10,0,100);pet.state='happy';pet.actionLock=2200;pet.lastAction=Date.now();addXP(18);setMessage("Let's play! 🎾");savePet()}
+      function sleepPet(){
+if(pet.energy>40){setMessage("I'm not sleepy. 😊");return;}
+pet.energy=clamp(pet.energy+32,0,100);pet.hunger=clamp(pet.hunger+8,0,100);pet.state='sleep';pet.actionLock=4000;pet.lastAction=Date.now();addXP(6);setMessage("Zzz... 😴");savePet()}
+      function cleanPet(){
+if(pet.cleanliness>70){setMessage("I'm already clean! ✨");return;}
+pet.cleanliness=clamp(pet.cleanliness+30,0,100);pet.happiness=clamp(pet.happiness+5,0,100);pet.state='clean';pet.actionLock=1800;pet.lastAction=Date.now();addXP(10);setMessage("Nice and clean! 🛁");savePet()}
+      function randomEvent(){const r=Math.random();if(r<0.14){pet.dirty=true;pet.cleanliness=clamp(pet.cleanliness-14,0,100);setMessage('I made a mess.')}else if(r<0.26){pet.happiness=clamp(pet.happiness+10,0,100);setMessage('Woof!')}else if(r<0.33){pet.hunger=clamp(pet.hunger+8,0,100);setMessage('I found a bone!')}else if(r<0.40){pet.blinkUntil=Date.now()+250;setMessage('...')}}
+      function tick(){const now=Date.now();pet.lastVisit=now;pet.hunger=clamp(pet.hunger+0.35,0,100);pet.energy=clamp(pet.energy-(pet.state==='sleep'?-0.9:0.28),0,100);pet.cleanliness=clamp(pet.cleanliness-0.18,0,100);if(now-pet.lastAction>90000)pet.happiness=clamp(pet.happiness-0.15,0,100);if(pet.hunger>70)pet.happiness=clamp(pet.happiness-0.25,0,100);if(pet.energy<25){pet.state='sleep';pet.message="I'm sleepy."}else if(pet.hunger>75){pet.state='sad';pet.message="I'm hungry."}else if(pet.happiness>75){pet.state='wag';if(Math.random()<0.02)pet.message='Woof!'}else if(pet.cleanliness<30){pet.state='sad';pet.message='I need a bath.'}else if(pet.state!=='sleep'&&pet.state!=='eat'&&pet.state!=='clean'&&pet.state!=='happy'){pet.state='idle'}if(now-pet.lastRandom>18000){pet.lastRandom=now;randomEvent()}if(now-pet.actionLock>0&&pet.actionLock){pet.actionLock=Math.max(0,pet.actionLock-1000);if(pet.actionLock===0&&pet.state!=='sleep')pet.state='idle'}applyAchievements();savePet();renderStats()}
+      function renderStats(){const vals={hunger:100-pet.hunger,happiness:pet.happiness,energy:pet.energy,cleanliness:pet.cleanliness,age:clamp((pet.age/30)*100,0,100),level:clamp(((pet.level-1)%10)*10+pet.xp%100,0,100)};for(const k in vals){ui.bars[k].style.width=vals[k]+'%';ui.texts[k].textContent=Math.round(k==='age'?pet.age:pet[k])}ui.ageBadge.textContent='Lv. '+pet.level;ui.xpText.textContent='XP '+Math.floor(pet.xp);ui.achievementsText.textContent='Achievements '+pet.achievementCount;ui.feedsText.textContent='Feeds '+pet.feeds;ui.daysText.textContent='Days '+pet.days.toFixed(1)}
+      function drawPixel(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(x,y,w,h)}
+      function drawDog(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.fillStyle='#081000';
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+const cx=160, cy=96;
+const blink=Date.now()<pet.blinkUntil;
+const wag=Math.sin(Date.now()/180)*(pet.state==='wag'?8:4);
+
+// ears
+drawPixel(cx-20,cy-22,10,14,'#8a6a1f');
+drawPixel(cx+10,cy-22,10,14,'#8a6a1f');
+drawPixel(cx-18,cy-18,6,8,'#ffd85c');
+drawPixel(cx+12,cy-18,6,8,'#ffd85c');
+
+// head (rounder)
+drawPixel(cx-22,cy-14,44,36,'#8a6a1f');
+drawPixel(cx-18,cy-10,36,28,'#ffd85c');
+
+// cheeks
+drawPixel(cx-18,cy+8,8,6,'#fff3d2');
+drawPixel(cx+10,cy+8,8,6,'#fff3d2');
+
+// muzzle
+drawPixel(cx-8,cy+10,16,8,'#fff8e8');
+
+// nose
+drawPixel(cx-2,cy+10,4,4,'#1a1200');
+
+// eyes
+if(!blink){
+ drawPixel(cx-10,cy,4,4,'#1a1200');
+ drawPixel(cx+6,cy,4,4,'#1a1200');
+}else{
+ drawPixel(cx-10,cy+1,4,2,'#1a1200');
+ drawPixel(cx+6,cy+1,4,2,'#1a1200');
+}
+
+// smile
+drawPixel(cx-1,cy+15,2,2,'#5a2a00');
+
+// body
+drawPixel(cx-16,cy+28,32,20,'#8a6a1f');
+drawPixel(cx-12,cy+32,24,14,'#ffd85c');
+
+// paws
+drawPixel(cx-12,cy+48,4,8,'#1a1200');
+drawPixel(cx+8,cy+48,4,8,'#1a1200');
+
+// tail
+drawPixel(cx+18+wag,cy+32,10,4,'#8a6a1f');
+drawPixel(cx+26+wag,cy+28,6,4,'#8a6a1f');
+}
+function renderPet(){drawDog()}
+      function loop(ts){if(!lastFrame)lastFrame=ts;lastFrame=ts;requestAnimationFrame(loop);renderPet();if(ts-lastTick>1000){lastTick=ts;tick()}}
+      function initPet(){loadPet();ui.buttons.feed.addEventListener('click',feedPet);ui.buttons.play.addEventListener('click',playPet);ui.buttons.sleep.addEventListener('click',sleepPet);ui.buttons.clean.addEventListener('click',cleanPet);renderStats();renderPet();requestAnimationFrame(loop);window.addEventListener('beforeunload',savePet)}
+      initPet();
     })();
   </script>
-
-  <div id="toast" class="toast">
-    <div class="toast-icon">🐕</div>
-    <div class="toast-content">
-      <div class="toast-title">Woof!</div>
-      <div class="toast-message"></div>
-    </div>
-    <button class="toast-close" onclick="hideToast()">✕</button>
-  </div>
-
+<div class="toast" id="toast"><div class="toast-icon">🐕</div><div class="toast-content"><div class="toast-title">Woof!</div><div class="toast-message"></div></div><button class="toast-close" onclick="hideToast()">✕</button></div>
 </body>
 </html>
