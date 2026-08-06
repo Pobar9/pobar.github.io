@@ -183,7 +183,7 @@ margin-bottom:1rem;
       const canvas=document.getElementById('pet-canvas'); const ctx=canvas.getContext('2d');
       const ui={message:document.getElementById('pet-message'),ageBadge:document.getElementById('pet-age-badge'),xpText:document.getElementById('pet-xp-text'),achievementsText:document.getElementById('pet-achievements-text'),feedsText:document.getElementById('pet-feeds-text'),daysText:document.getElementById('pet-days-text'),bars:{hunger:document.getElementById('stat-hunger-bar'),happiness:document.getElementById('stat-happiness-bar'),energy:document.getElementById('stat-energy-bar'),cleanliness:document.getElementById('stat-cleanliness-bar'),age:document.getElementById('stat-age-bar'),level:document.getElementById('stat-level-bar')},texts:{hunger:document.getElementById('stat-hunger-text'),happiness:document.getElementById('stat-happiness-text'),energy:document.getElementById('stat-energy-text'),cleanliness:document.getElementById('stat-cleanliness-text'),age:document.getElementById('stat-age-text'),level:document.getElementById('stat-level-text')},buttons:{feed:document.getElementById('pet-feed-btn'),play:document.getElementById('pet-play-btn'),sleep:document.getElementById('pet-sleep-btn'),clean:document.getElementById('pet-clean-btn')}};
       let pet=null,lastFrame=0,lastTick=0;
-      function basePet(){return{hunger:78,happiness:72,energy:80,cleanliness:90,age:0,level:1,xp:0,feeds:0,days:0,achievementCount:0,lastVisit:Date.now(),lastAction:Date.now(),lastRandom:Date.now(),message:'Woof!',state:'idle',blinkUntil:0,dirty:false,actionLock:0}}
+      function basePet(){return{hunger:78,happiness:72,energy:80,cleanliness:90,age:0,level:1,xp:0,feeds:0,days:0,achievementCount:0,lastVisit:Date.now(),lastAction:Date.now(),lastRandom:Date.now(),message:'Woof!',state:'idle',blinkUntil:0,dirty:false,actionLock:0,sleeping:false,sleepAnim:0,playing:false,playStart:0,playDuration:0,eating:false,eatStart:0,eatDuration:0,eatFrom:0,eatTo:0}}
       function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
       function xpToLevel(){return Math.floor(pet.xp/100)+1}
       function applyAchievements(){const a=[pet.feeds>=1,pet.feeds>=10,pet.days>=1,pet.level>=5,pet.cleanliness>=95&&pet.happiness>=95].filter(Boolean).length;pet.achievementCount=a;pet.level=xpToLevel()}
@@ -192,20 +192,74 @@ margin-bottom:1rem;
       function loadPet(){const raw=localStorage.getItem(STORAGE_KEY);pet=raw?Object.assign(basePet(),JSON.parse(raw)):basePet();const now=Date.now();const elapsed=Math.max(0,now-(pet.lastVisit||now));const minutes=elapsed/60000;const hours=elapsed/3600000;pet.hunger=clamp(pet.hunger+minutes*1.4,0,100);pet.energy=clamp(pet.energy-hours*7,0,100);pet.happiness=clamp(pet.happiness-minutes*0.5-hours*1.2,0,100);pet.cleanliness=clamp(pet.cleanliness-minutes*0.8-hours*1.0,0,100);pet.age=(pet.age||0)+hours/24;pet.days=(pet.days||0)+elapsed/86400000;pet.lastVisit=now;setMessage(now-pet.lastAction>60000?"I'm back!":"Woof!");applyAchievements();savePet()}
       function addXP(v){pet.xp=Math.max(0,pet.xp+v);pet.level=xpToLevel();applyAchievements()}
       function feedPet(){
+if(pet.sleeping||pet.playing||pet.eating){setMessage("Busy! 🐕");return;}
 if(pet.hunger<50){setMessage("I'm not hungry. 🐕");return;}
-pet.hunger=clamp(pet.hunger-28,0,100);pet.happiness=clamp(pet.happiness+8,0,100);pet.energy=clamp(pet.energy+2,0,100);pet.feeds++;pet.state='eat';pet.actionLock=2500;pet.lastAction=Date.now();addXP(12);setMessage("Yummy! 🍖");savePet()}
+pet.eating=true;
+pet.state='eat';
+pet.eatStart=performance.now();
+pet.eatDuration=[2500,3200,4200,5000][Math.floor(Math.random()*4)];
+pet.eatFrom=pet.hunger;
+pet.eatTo=Math.max(0,pet.hunger-28);
+setMessage("Nom nom... 🍖");
+savePet();
+}
       function playPet(){
+if(pet.sleeping){setMessage("Let's play after my nap! 😴");return;}
+if(pet.playing)return;
 if(pet.energy<40){setMessage("I'm too tired... 😴");return;}
 if(pet.hunger>60){setMessage("I'm hungry first! 🍖");return;}
-pet.happiness=clamp(pet.happiness+20,0,100);pet.energy=clamp(pet.energy-14,0,100);pet.hunger=clamp(pet.hunger+10,0,100);pet.state='happy';pet.actionLock=2200;pet.lastAction=Date.now();addXP(18);setMessage("Let's play! 🎾");savePet()}
+pet.playing=true;
+pet.state='play';
+pet.playStart=performance.now();
+pet.playDuration=[2500,3200,4200][Math.floor(Math.random()*3)];
+setMessage("Catch! 🎾");
+savePet();
+}
       function sleepPet(){
-if(pet.energy>40){setMessage("I'm not sleepy. 😊");return;}
-pet.energy=clamp(pet.energy+32,0,100);pet.hunger=clamp(pet.hunger+8,0,100);pet.state='sleep';pet.actionLock=4000;pet.lastAction=Date.now();addXP(6);setMessage("Zzz... 😴");savePet()}
+if(pet.sleeping){setMessage("Already sleeping... 💤");return;}
+if(pet.energy>40){setMessage("I'm not sleepy yet. 😊");return;}
+pet.sleeping=true;
+pet.state='sleep';
+pet.lastAction=Date.now();
+setMessage("Zzz... 😴");
+savePet();
+}
       function cleanPet(){
+if(pet.sleeping){setMessage("Don't wake me... 💤");return;}
+
 if(pet.cleanliness>70){setMessage("I'm already clean! ✨");return;}
 pet.cleanliness=clamp(pet.cleanliness+30,0,100);pet.happiness=clamp(pet.happiness+5,0,100);pet.state='clean';pet.actionLock=1800;pet.lastAction=Date.now();addXP(10);setMessage("Nice and clean! 🛁");savePet()}
       function randomEvent(){const r=Math.random();if(r<0.14){pet.dirty=true;pet.cleanliness=clamp(pet.cleanliness-14,0,100);setMessage('I made a mess.')}else if(r<0.26){pet.happiness=clamp(pet.happiness+10,0,100);setMessage('Woof!')}else if(r<0.33){pet.hunger=clamp(pet.hunger+8,0,100);setMessage('I found a bone!')}else if(r<0.40){pet.blinkUntil=Date.now()+250;setMessage('...')}}
-      function tick(){const now=Date.now();pet.lastVisit=now;pet.hunger=clamp(pet.hunger+0.35,0,100);pet.energy=clamp(pet.energy-(pet.state==='sleep'?-0.9:0.28),0,100);pet.cleanliness=clamp(pet.cleanliness-0.18,0,100);if(now-pet.lastAction>90000)pet.happiness=clamp(pet.happiness-0.15,0,100);if(pet.hunger>70)pet.happiness=clamp(pet.happiness-0.25,0,100);if(pet.energy<25){pet.state='sleep';pet.message="I'm sleepy."}else if(pet.hunger>75){pet.state='sad';pet.message="I'm hungry."}else if(pet.happiness>75){pet.state='wag';if(Math.random()<0.02)pet.message='Woof!'}else if(pet.cleanliness<30){pet.state='sad';pet.message='I need a bath.'}else if(pet.state!=='sleep'&&pet.state!=='eat'&&pet.state!=='clean'&&pet.state!=='happy'){pet.state='idle'}if(now-pet.lastRandom>18000){pet.lastRandom=now;randomEvent()}if(now-pet.actionLock>0&&pet.actionLock){pet.actionLock=Math.max(0,pet.actionLock-1000);if(pet.actionLock===0&&pet.state!=='sleep')pet.state='idle'}applyAchievements();savePet();renderStats()}
+      function tick(){
+const now=Date.now();
+pet.lastVisit=now;
+
+if(pet.sleeping){
+ pet.sleepAnim++;
+ pet.energy=clamp(pet.energy+3,0,100);
+ pet.hunger=clamp(pet.hunger+0.2,0,100);
+ if(pet.energy>=90){
+   pet.sleeping=false;
+   pet.state='idle';
+   setMessage("Woof! I'm awake! 🐾");
+ }
+ applyAchievements();savePet();renderStats();
+ return;
+}
+
+pet.hunger=clamp(pet.hunger+0.35,0,100);
+pet.energy=clamp(pet.energy-0.28,0,100);
+pet.cleanliness=clamp(pet.cleanliness-0.18,0,100);
+if(now-pet.lastAction>90000)pet.happiness=clamp(pet.happiness-0.15,0,100);
+if(pet.hunger>70)pet.happiness=clamp(pet.happiness-0.25,0,100);
+if(pet.energy<25){pet.message="I'm sleepy.";}
+else if(pet.hunger>75){pet.state='sad';pet.message="I'm hungry.";}
+else if(pet.happiness>75){pet.state='wag';}
+else if(pet.cleanliness<30){pet.state='sad';pet.message='I need a bath.';}
+else pet.state='idle';
+if(now-pet.lastRandom>18000){pet.lastRandom=now;randomEvent();}
+applyAchievements();savePet();renderStats()
+}
       function renderStats(){const vals={hunger:100-pet.hunger,happiness:pet.happiness,energy:pet.energy,cleanliness:pet.cleanliness,age:clamp((pet.age/30)*100,0,100),level:clamp(((pet.level-1)%10)*10+pet.xp%100,0,100)};for(const k in vals){ui.bars[k].style.width=vals[k]+'%';ui.texts[k].textContent=Math.round(k==='age'?pet.age:pet[k])}ui.ageBadge.textContent='Lv. '+pet.level;ui.xpText.textContent='XP '+Math.floor(pet.xp);ui.achievementsText.textContent='Achievements '+pet.achievementCount;ui.feedsText.textContent='Feeds '+pet.feeds;ui.daysText.textContent='Days '+pet.days.toFixed(1)}
       function drawPixel(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(x,y,w,h)}
       function drawDog(){
@@ -213,8 +267,20 @@ ctx.clearRect(0,0,canvas.width,canvas.height);
 ctx.fillStyle='#081000';
 ctx.fillRect(0,0,canvas.width,canvas.height);
 
-const cx=160, cy=96;
-const blink=Date.now()<pet.blinkUntil;
+let cx=160, cy=96;
+if(pet.playing){
+  const progress=Math.min(1,(performance.now()-pet.playStart)/pet.playDuration);
+  let target;
+  if(progress<0.45){
+    target=160+(progress/0.45)*70;
+  }else if(progress<0.60){
+    target=230; // catches the ball
+  }else{
+    target=230-((progress-0.60)/0.40)*70;
+  }
+  cx=target;
+}
+const blink=pet.sleeping?false:(Date.now()<pet.blinkUntil);
 const wag=Math.sin(Date.now()/180)*(pet.state==='wag'?8:4);
 
 // ears
@@ -234,11 +300,35 @@ drawPixel(cx+10,cy+8,8,6,'#fff3d2');
 // muzzle
 drawPixel(cx-8,cy+10,16,8,'#fff8e8');
 
+// eating meat
+if(pet.eating){
+ const chew=Math.floor((performance.now()-pet.eatStart)/160)%2;
+ const bx=cx+12-(chew?1:0), by=cy+10+(chew?1:0);
+
+ // steak
+ drawPixel(bx,by+2,12,8,'#a22a2a');
+ drawPixel(bx+2,by+4,8,4,'#c83c3c');
+
+ // bone
+ drawPixel(bx+4,by,4,12,'#f2ead8');
+ drawPixel(bx+2,by,2,2,'#f2ead8');
+ drawPixel(bx+6,by,2,2,'#f2ead8');
+ drawPixel(bx+2,by+10,2,2,'#f2ead8');
+ drawPixel(bx+6,by+10,2,2,'#f2ead8');
+}
 // nose
 drawPixel(cx-2,cy+10,4,4,'#1a1200');
 
+if(pet.sleeping){
+ctx.fillStyle='#fff0a0';
+ctx.font='16px monospace';
+const y=(pet.sleepAnim%3);
+ctx.fillText('Z',cx+28,cy-26-y*2);
+ctx.fillText('z',cx+36,cy-40-y*2);
+ctx.fillText('Z',cx+44,cy-54-y*2);
+}
 // eyes
-if(!blink){
+if(pet.sleeping){drawPixel(cx-10,cy+1,4,2,'#1a1200');drawPixel(cx+6,cy+1,4,2,'#1a1200');}else if(!blink){
  drawPixel(cx-10,cy,4,4,'#1a1200');
  drawPixel(cx+6,cy,4,4,'#1a1200');
 }else{
@@ -246,8 +336,18 @@ if(!blink){
  drawPixel(cx+6,cy+1,4,2,'#1a1200');
 }
 
-// smile
-drawPixel(cx-1,cy+15,2,2,'#5a2a00');
+// mouth
+if(pet.eating){
+  const chew=Math.floor((performance.now()-pet.eatStart)/160)%2;
+  if(chew===0){
+    drawPixel(cx-2,cy+15,4,2,'#5a2a00');
+  }else{
+    drawPixel(cx-2,cy+15,4,4,'#5a2a00');
+    drawPixel(cx-1,cy+19,2,2,'#8b1e1e');
+  }
+}else{
+  drawPixel(cx-1,cy+15,2,2,'#5a2a00');
+}
 
 // body
 drawPixel(cx-16,cy+28,32,20,'#8a6a1f');
@@ -257,11 +357,65 @@ drawPixel(cx-12,cy+32,24,14,'#ffd85c');
 drawPixel(cx-12,cy+48,4,8,'#1a1200');
 drawPixel(cx+8,cy+48,4,8,'#1a1200');
 
+
+// pixel ball
+if(pet.playing){
+ const progress=Math.min(1,(performance.now()-pet.playStart)/pet.playDuration);
+ let bx;
+ if(progress<0.45){
+   // run to the right
+   bx=40+(progress/0.45)*190;
+ }else if(progress<0.60){
+   // short pause - Barky catches the ball
+   bx=230;
+ }else{
+   // return
+   bx=230-((progress-0.60)/0.40)*190;
+ }
+ const bounce=(progress<0.45 || progress>0.60);
+ const by=48+(bounce?Math.sin(progress*Math.PI*8)*10:0);
+ drawPixel(bx+2,by,4,4,'#ffe600');
+ drawPixel(bx,by+4,8,4,'#ffe600');
+ drawPixel(bx,by+8,8,4,'#c89d24');
+ drawPixel(bx+2,by+12,4,4,'#c89d24');
+}
+
 // tail
 drawPixel(cx+18+wag,cy+32,10,4,'#8a6a1f');
 drawPixel(cx+26+wag,cy+28,6,4,'#8a6a1f');
 }
-function renderPet(){drawDog()}
+function renderPet(){
+if(pet.eating){
+ const p=Math.min(1,(performance.now()-pet.eatStart)/pet.eatDuration);
+ pet.hunger=pet.eatFrom+(pet.eatTo-pet.eatFrom)*p;
+ if(p>=1){
+   pet.eating=false;
+   pet.hunger=pet.eatTo;
+   pet.feeds++;
+   pet.happiness=clamp(pet.happiness+8,0,100);
+   pet.energy=clamp(pet.energy+2,0,100);
+   addXP(12);
+   pet.state='idle';
+   setMessage("Yummy! 🍖");
+   savePet();
+ }
+}
+
+ if(pet.playing){
+   const p=Math.min(1,(performance.now()-pet.playStart)/pet.playDuration);
+   if(p>=1){
+      pet.playing=false;
+      pet.happiness=clamp(pet.happiness+20,0,100);
+      pet.energy=clamp(pet.energy-14,0,100);
+      pet.hunger=clamp(pet.hunger+10,0,100);
+      addXP(18);
+      pet.state='idle';
+      setMessage("That was fun! 🐾");
+      savePet();
+   }
+ }
+ drawDog();
+}
       function loop(ts){if(!lastFrame)lastFrame=ts;lastFrame=ts;requestAnimationFrame(loop);renderPet();if(ts-lastTick>1000){lastTick=ts;tick()}}
       function initPet(){loadPet();ui.buttons.feed.addEventListener('click',feedPet);ui.buttons.play.addEventListener('click',playPet);ui.buttons.sleep.addEventListener('click',sleepPet);ui.buttons.clean.addEventListener('click',cleanPet);renderStats();renderPet();requestAnimationFrame(loop);window.addEventListener('beforeunload',savePet)}
       initPet();
