@@ -77,6 +77,13 @@
     #pet-widget .pet-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:0 14px 16px}
     #pet-widget .pet-actions button{background:linear-gradient(180deg,rgba(255,230,90,.16),rgba(255,230,90,.07));border:1px solid rgba(255,230,90,.18);color:#fff2ad;border-radius:12px;padding:10px 6px;font:600 12px/1 monospace;cursor:pointer;box-shadow:inset 0 0 0 1px rgba(0,0,0,.25)}
     #pet-widget .pet-actions button:hover{transform:translateY(-1px);box-shadow:0 0 16px rgba(255,230,90,.12),inset 0 0 0 1px rgba(0,0,0,.25)}
+    #pet-widget.is-dead .pet-screen{filter:grayscale(.85) brightness(.55)}
+    #pet-widget.is-dead .pet-badge{color:#ff8a8a}
+    #pet-widget .pet-revive-wrap{display:none;padding:0 14px 16px}
+    #pet-widget.is-dead .pet-actions{display:none}
+    #pet-widget.is-dead .pet-revive-wrap{display:block}
+    #pet-widget .pet-revive-btn{width:100%;background:linear-gradient(180deg,rgba(255,120,120,.28),rgba(255,80,80,.12));border:1px solid rgba(255,140,140,.35);color:#ffe0e0;border-radius:12px;padding:14px 10px;font:700 13px/1 monospace;cursor:pointer;box-shadow:0 0 20px rgba(255,100,100,.15),inset 0 0 0 1px rgba(0,0,0,.25);letter-spacing:.08em;text-transform:uppercase}
+    #pet-widget .pet-revive-btn:hover{transform:translateY(-1px);box-shadow:0 0 24px rgba(255,100,100,.25),inset 0 0 0 1px rgba(0,0,0,.25)}
     #pet-widget .pet-footer{display:flex;justify-content:space-between;gap:10px;padding:0 16px 16px;font-family:monospace;font-size:12px;opacity:.86;flex-wrap:wrap}
     @media (max-width:540px){#pet-widget .pet-stats{grid-template-columns:1fr}#pet-widget .pet-actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media (prefers-reduced-motion: reduce){.link,.toggle-btn,.send-btn,.form-shell,.loader{transition:none}.loader-dogs span,.card{animation:none;opacity:1}}
@@ -154,6 +161,7 @@ margin-bottom:1rem;
 <div class="pet-actions">
 <button id="pet-feed-btn">🍖 Feed</button><button id="pet-play-btn">🎾 Play</button><button id="pet-sleep-btn">😴 Sleep</button><button id="pet-clean-btn">🧹 Clean</button>
 </div>
+<div class="pet-revive-wrap"><button class="pet-revive-btn" id="pet-revive-btn" type="button">✨ Revive</button></div>
 <div class="pet-footer"><span id="pet-xp-text">XP 0</span><span id="pet-achievements-text">Achievements 0</span><span id="pet-feeds-text">Feeds 0</span><span id="pet-days-text">Days 0</span></div>
 </section></section>
 </section>
@@ -180,18 +188,24 @@ margin-bottom:1rem;
       form.addEventListener('submit', async (event) => { event.preventDefault(); const webhookUrl = 'https://discord.com/api/webhooks/1528690965563310130/1Kc_RtJd1nOLsmsapwi0q95Yy8Y-gBZ-Jz0SzBCZ3gvQHyC_Il8AiQD6dw00T4kq-muq'; if (!webhookUrl || webhookUrl.includes('PASTE')) { status.textContent = 'Nejdřív doplň webhook do souboru config.js.'; return; } const data = new FormData(form); const payload = { embeds: [{ title: 'Nová zpráva z webu Pobar', color: 16770560, fields: [ { name: 'Jméno / přezdívka', value: String(data.get('name') || '-').slice(0, 1024) }, { name: 'Kontakt', value: String(data.get('contact') || '-').slice(0, 1024) }, { name: 'Zpráva', value: String(data.get('message') || '-').slice(0, 1024) } ], footer: { text: 'Odesláno z webu Pobar' }, timestamp: new Date().toISOString() }] }; status.textContent = 'Sending message…'; try { const response = await fetch(webhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) throw new Error('Webhook request failed'); form.reset(); showToast('Your message has been sent successfully. Thanks! 🐾', true); status.textContent=''; } catch (error) { showToast('Something went wrong. Please try again.', false); status.textContent=''; } });
 
       const STORAGE_KEY='pobar_tamagotchi_v1';
+     const DEATH_THRESHOLD_MS = 2 * 24 * 60 * 60 * 1000;
+      const petWidget=document.getElementById('pet-widget');
       const canvas=document.getElementById('pet-canvas'); const ctx=canvas.getContext('2d');
-      const ui={message:document.getElementById('pet-message'),ageBadge:document.getElementById('pet-age-badge'),xpText:document.getElementById('pet-xp-text'),achievementsText:document.getElementById('pet-achievements-text'),feedsText:document.getElementById('pet-feeds-text'),daysText:document.getElementById('pet-days-text'),bars:{hunger:document.getElementById('stat-hunger-bar'),happiness:document.getElementById('stat-happiness-bar'),energy:document.getElementById('stat-energy-bar'),cleanliness:document.getElementById('stat-cleanliness-bar'),age:document.getElementById('stat-age-bar'),level:document.getElementById('stat-level-bar')},texts:{hunger:document.getElementById('stat-hunger-text'),happiness:document.getElementById('stat-happiness-text'),energy:document.getElementById('stat-energy-text'),cleanliness:document.getElementById('stat-cleanliness-text'),age:document.getElementById('stat-age-text'),level:document.getElementById('stat-level-text')},buttons:{feed:document.getElementById('pet-feed-btn'),play:document.getElementById('pet-play-btn'),sleep:document.getElementById('pet-sleep-btn'),clean:document.getElementById('pet-clean-btn')}};
+      const ui={message:document.getElementById('pet-message'),ageBadge:document.getElementById('pet-age-badge'),xpText:document.getElementById('pet-xp-text'),achievementsText:document.getElementById('pet-achievements-text'),feedsText:document.getElementById('pet-feeds-text'),daysText:document.getElementById('pet-days-text'),bars:{hunger:document.getElementById('stat-hunger-bar'),happiness:document.getElementById('stat-happiness-bar'),energy:document.getElementById('stat-energy-bar'),cleanliness:document.getElementById('stat-cleanliness-bar'),age:document.getElementById('stat-age-bar'),level:document.getElementById('stat-level-bar')},texts:{hunger:document.getElementById('stat-hunger-text'),happiness:document.getElementById('stat-happiness-text'),energy:document.getElementById('stat-energy-text'),cleanliness:document.getElementById('stat-cleanliness-text'),age:document.getElementById('stat-age-text'),level:document.getElementById('stat-level-text')},buttons:{feed:document.getElementById('pet-feed-btn'),play:document.getElementById('pet-play-btn'),sleep:document.getElementById('pet-sleep-btn'),clean:document.getElementById('pet-clean-btn'),revive:document.getElementById('pet-revive-btn')}};
       let pet=null,lastFrame=0,lastTick=0;
-      function basePet(){return{hunger:78,happiness:72,energy:80,cleanliness:90,age:0,level:1,xp:0,feeds:0,days:0,achievementCount:0,lastVisit:Date.now(),lastAction:Date.now(),lastRandom:Date.now(),message:'Woof!',state:'idle',blinkUntil:0,dirty:false,actionLock:0,sleeping:false,sleepAnim:0,playing:false,playStart:0,playDuration:0,eating:false,eatStart:0,eatDuration:0,eatFrom:0,eatTo:0}}
+      function basePet(){return{hunger:78,happiness:72,energy:80,cleanliness:90,age:0,level:1,xp:0,feeds:0,days:0,achievementCount:0,lastVisit:Date.now(),lastAction:Date.now(),lastRandom:Date.now(),message:'Woof!',state:'idle',blinkUntil:0,dirty:false,actionLock:0,sleeping:false,sleepAnim:0,playing:false,playStart:0,playDuration:0,eating:false,eatStart:0,eatDuration:0,eatFrom:0,eatTo:0,dead:false,deathAt:0}}
       function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
       function xpToLevel(){return Math.floor(pet.xp/100)+1}
       function applyAchievements(){const a=[pet.feeds>=1,pet.feeds>=10,pet.days>=1,pet.level>=5,pet.cleanliness>=95&&pet.happiness>=95].filter(Boolean).length;pet.achievementCount=a;pet.level=xpToLevel()}
       function setMessage(text){pet.message=text;ui.message.textContent=text}
       function savePet(){localStorage.setItem(STORAGE_KEY,JSON.stringify(pet))}
-      function loadPet(){const raw=localStorage.getItem(STORAGE_KEY);pet=raw?Object.assign(basePet(),JSON.parse(raw)):basePet();const now=Date.now();const elapsed=Math.max(0,now-(pet.lastVisit||now));const minutes=elapsed/60000;const hours=elapsed/3600000;pet.hunger=clamp(pet.hunger+minutes*1.4,0,100);pet.energy=clamp(pet.energy-hours*7,0,100);pet.happiness=clamp(pet.happiness-minutes*0.5-hours*1.2,0,100);pet.cleanliness=clamp(pet.cleanliness-minutes*0.8-hours*1.0,0,100);pet.age=(pet.age||0)+hours/24;pet.days=(pet.days||0)+elapsed/86400000;pet.lastVisit=now;setMessage(now-pet.lastAction>60000?"I'm back!":"Woof!");applyAchievements();savePet()}
+      function updateDeathUI(){petWidget.classList.toggle('is-dead',!!pet.dead);ui.ageBadge.textContent=pet.dead?'R.I.P.':'Lv. '+pet.level}
+      function checkDeathOnReturn(now,elapsed){if(pet.dead)return;if(elapsed>=DEATH_THRESHOLD_MS){pet.dead=true;pet.deathAt=now;pet.state='dead';pet.sleeping=false;pet.playing=false;pet.eating=false;setMessage('I missed you too much… 💔');return}setMessage(now-pet.lastAction>60000?"I'm back!":"Woof!")}
+      function revivePet(){if(!pet.dead)return;pet.dead=false;pet.deathAt=0;pet.state='idle';pet.hunger=55;pet.happiness=50;pet.energy=45;pet.cleanliness=50;pet.lastAction=Date.now();pet.lastVisit=Date.now();setMessage("I'm alive again! Woof! 🐾");updateDeathUI();applyAchievements();renderStats();savePet()}
+      function loadPet(){const raw=localStorage.getItem(STORAGE_KEY);pet=raw?Object.assign(basePet(),JSON.parse(raw)):basePet();const now=Date.now();const elapsed=Math.max(0,now-(pet.lastVisit||now));const minutes=elapsed/60000;const hours=elapsed/3600000;if(!pet.dead){pet.hunger=clamp(pet.hunger+minutes*1.4,0,100);pet.energy=clamp(pet.energy-hours*7,0,100);pet.happiness=clamp(pet.happiness-minutes*0.5-hours*1.2,0,100);pet.cleanliness=clamp(pet.cleanliness-minutes*0.8-hours*1.0,0,100);pet.age=(pet.age||0)+hours/24;pet.days=(pet.days||0)+elapsed/86400000}checkDeathOnReturn(now,elapsed);pet.lastVisit=now;applyAchievements();updateDeathUI();savePet()}
       function addXP(v){pet.xp=Math.max(0,pet.xp+v);pet.level=xpToLevel();applyAchievements()}
       function feedPet(){
+if(pet.dead)return;
 if(pet.sleeping||pet.playing||pet.eating){setMessage("Busy! 🐕");return;}
 if(pet.hunger<50){setMessage("I'm not hungry. 🐕");return;}
 pet.eating=true;
@@ -204,6 +218,7 @@ setMessage("Nom nom... 🍖");
 savePet();
 }
       function playPet(){
+if(pet.dead)return;
 if(pet.sleeping){setMessage("Let's play after my nap! 😴");return;}
 if(pet.playing)return;
 if(pet.energy<40){setMessage("I'm too tired... 😴");return;}
@@ -216,6 +231,7 @@ setMessage("Catch! 🎾");
 savePet();
 }
       function sleepPet(){
+if(pet.dead)return;
 if(pet.sleeping){setMessage("Already sleeping... 💤");return;}
 if(pet.energy>40){setMessage("I'm not sleepy yet. 😊");return;}
 pet.sleeping=true;
@@ -225,6 +241,7 @@ setMessage("Zzz... 😴");
 savePet();
 }
       function cleanPet(){
+if(pet.dead)return;
 if(pet.sleeping){setMessage("Don't wake me... 💤");return;}
 
 if(pet.cleanliness>70){setMessage("I'm already clean! ✨");return;}
@@ -233,6 +250,7 @@ pet.cleanliness=clamp(pet.cleanliness+30,0,100);pet.happiness=clamp(pet.happines
       function tick(){
 const now=Date.now();
 pet.lastVisit=now;
+if(pet.dead){renderStats();return}
 
 if(pet.sleeping){
  pet.sleepAnim++;
@@ -260,12 +278,36 @@ else pet.state='idle';
 if(now-pet.lastRandom>18000){pet.lastRandom=now;randomEvent();}
 applyAchievements();savePet();renderStats()
 }
-      function renderStats(){const vals={hunger:100-pet.hunger,happiness:pet.happiness,energy:pet.energy,cleanliness:pet.cleanliness,age:clamp((pet.age/30)*100,0,100),level:clamp(((pet.level-1)%10)*10+pet.xp%100,0,100)};for(const k in vals){ui.bars[k].style.width=vals[k]+'%';ui.texts[k].textContent=Math.round(k==='age'?pet.age:pet[k])}ui.ageBadge.textContent='Lv. '+pet.level;ui.xpText.textContent='XP '+Math.floor(pet.xp);ui.achievementsText.textContent='Achievements '+pet.achievementCount;ui.feedsText.textContent='Feeds '+pet.feeds;ui.daysText.textContent='Days '+pet.days.toFixed(1)}
+      function renderStats(){const vals={hunger:100-pet.hunger,happiness:pet.happiness,energy:pet.energy,cleanliness:pet.cleanliness,age:clamp((pet.age/30)*100,0,100),level:clamp(((pet.level-1)%10)*10+pet.xp%100,0,100)};for(const k in vals){ui.bars[k].style.width=vals[k]+'%';ui.texts[k].textContent=Math.round(k==='age'?pet.age:pet[k])}ui.ageBadge.textContent=pet.dead?'R.I.P.':'Lv. '+pet.level;ui.xpText.textContent='XP '+Math.floor(pet.xp);ui.achievementsText.textContent='Achievements '+pet.achievementCount;ui.feedsText.textContent='Feeds '+pet.feeds;ui.daysText.textContent='Days '+pet.days.toFixed(1)}
       function drawPixel(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(x,y,w,h)}
+      function drawDeadDog(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.fillStyle='#081000';
+ctx.fillRect(0,0,canvas.width,canvas.height);
+const cx=160,cy=108;
+drawPixel(cx-22,cy-6,44,28,'#6a5218');
+drawPixel(cx-18,cy-2,36,20,'#b89a48');
+drawPixel(cx-20,cy-10,8,10,'#6a5218');
+drawPixel(cx+12,cy-10,8,10,'#6a5218');
+drawPixel(cx-10,cy+2,4,4,'#1a1200');
+drawPixel(cx+6,cy+2,4,4,'#1a1200');
+drawPixel(cx-8,cy,6,2,'#ff6b6b');
+drawPixel(cx+2,cy,6,2,'#ff6b6b');
+drawPixel(cx-1,cy+8,2,2,'#5a2a00');
+drawPixel(cx-14,cy+18,28,10,'#6a5218');
+drawPixel(cx-10,cy+22,20,8,'#b89a48');
+drawPixel(cx-18,cy+28,6,4,'#1a1200');
+drawPixel(cx+12,cy+28,6,4,'#1a1200');
+drawPixel(cx+20,cy+20,8,4,'#6a5218');
+ctx.fillStyle='rgba(255,120,120,.75)';
+ctx.font='11px monospace';
+ctx.fillText('RIP',cx-10,cy-18);
+}
       function drawDog(){
 ctx.clearRect(0,0,canvas.width,canvas.height);
 ctx.fillStyle='#081000';
 ctx.fillRect(0,0,canvas.width,canvas.height);
+if(pet.dead){drawDeadDog();return}
 
 let cx=160, cy=96;
 if(pet.playing){
@@ -417,7 +459,7 @@ if(pet.eating){
  drawDog();
 }
       function loop(ts){if(!lastFrame)lastFrame=ts;lastFrame=ts;requestAnimationFrame(loop);renderPet();if(ts-lastTick>1000){lastTick=ts;tick()}}
-      function initPet(){loadPet();ui.buttons.feed.addEventListener('click',feedPet);ui.buttons.play.addEventListener('click',playPet);ui.buttons.sleep.addEventListener('click',sleepPet);ui.buttons.clean.addEventListener('click',cleanPet);renderStats();renderPet();requestAnimationFrame(loop);window.addEventListener('beforeunload',savePet)}
+      function initPet(){loadPet();ui.buttons.feed.addEventListener('click',feedPet);ui.buttons.play.addEventListener('click',playPet);ui.buttons.sleep.addEventListener('click',sleepPet);ui.buttons.clean.addEventListener('click',cleanPet);ui.buttons.revive.addEventListener('click',revivePet);renderStats();renderPet();requestAnimationFrame(loop);window.addEventListener('beforeunload',()=>{pet.lastVisit=Date.now();savePet()});document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){pet.lastVisit=Date.now();savePet()}})}
       initPet();
     })();
   </script>
