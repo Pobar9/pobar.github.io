@@ -206,6 +206,12 @@ margin-bottom:1rem;
 
   <div class="changelog-entry">
     <div class="changelog-version">LATEST UPDATE</div>
+    <h3>Revive now fully resets Po-barky</h3>
+    <p>Reviving Po-barky now starts a completely fresh pet, resetting all stats, XP, level, age, achievements, feeds and days.</p>
+  </div>
+
+  <div class="changelog-entry">
+    <div class="changelog-version">PREVIOUS UPDATE</div>
     <h3>Po-barky death timer</h3>
     <p>The death threshold has been extended to 2 days of inactivity.</p>
   </div>
@@ -298,7 +304,17 @@ margin-bottom:1rem;
       function savePet(){localStorage.setItem(STORAGE_KEY,JSON.stringify(pet))}
       function updateDeathUI(){petWidget.classList.toggle('is-dead',!!pet.dead);ui.ageBadge.textContent=pet.dead?'R.I.P.':'Lv. '+pet.level}
       function checkDeathOnReturn(now,elapsed){if(pet.dead)return;if(elapsed>=DEATH_THRESHOLD_MS){pet.dead=true;pet.deathAt=now;pet.state='dead';pet.sleeping=false;pet.playing=false;pet.eating=false;setMessage('I missed you too much… 💔');return}setMessage(now-pet.lastAction>60000?"I'm back!":"Woof!")}
-      function revivePet(){if(!pet.dead)return;pet.dead=false;pet.deathAt=0;pet.state='idle';pet.hunger=55;pet.happiness=50;pet.energy=45;pet.cleanliness=50;pet.lastAction=Date.now();pet.lastVisit=Date.now();setMessage("I'm alive again! Woof! 🐾");updateDeathUI();applyAchievements();renderStats();savePet()}
+      function revivePet(){
+if(!pet.dead)return;
+pet=basePet();
+pet.lastVisit=Date.now();
+pet.lastAction=Date.now();
+setMessage("I'm alive again! Woof! 🐾");
+updateDeathUI();
+applyAchievements();
+renderStats();
+savePet();
+}
       function loadPet(){const raw=localStorage.getItem(STORAGE_KEY);pet=raw?Object.assign(basePet(),JSON.parse(raw)):basePet();const now=Date.now();const elapsed=Math.max(0,now-(pet.lastVisit||now));const minutes=elapsed/60000;const hours=elapsed/3600000;if(!pet.dead){pet.hunger=clamp(pet.hunger+minutes*1.4,0,100);pet.energy=clamp(pet.energy-hours*7,0,100);pet.happiness=clamp(pet.happiness-minutes*0.5-hours*1.2,0,100);pet.cleanliness=clamp(pet.cleanliness-minutes*0.8-hours*1.0,0,100);pet.age=(pet.age||0)+hours/24;pet.days=(pet.days||0)+elapsed/86400000}checkDeathOnReturn(now,elapsed);pet.lastVisit=now;applyAchievements();updateDeathUI();savePet()}
       function addXP(v){pet.xp=Math.max(0,pet.xp+v);pet.level=xpToLevel();applyAchievements()}
       function feedPet(){
