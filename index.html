@@ -103,6 +103,92 @@ margin-bottom:.4rem;
 color:var(--color-text-muted);
 margin-bottom:1rem;
 }
+
+/* Changelog */
+.changelog{
+  position:fixed;
+  left:clamp(14px,3vw,48px);
+  top:50%;
+  transform:translateY(-50%);
+  width:min(280px,22vw);
+  min-width:220px;
+  max-height:min(72vh,620px);
+  overflow:auto;
+  padding:18px;
+  border:1px solid var(--color-border);
+  border-radius:24px;
+  background:var(--color-surface);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  box-shadow:var(--shadow);
+  z-index:3;
+}
+.changelog-title{
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  font-family:var(--font-display);
+  font-size:1.2rem;
+  letter-spacing:-.03em;
+  margin-bottom:1rem;
+}
+.changelog-title span:first-child{
+  font-size:1.25rem;
+}
+.changelog-entry{
+  position:relative;
+  padding:0 0 1rem 1rem;
+  margin-left:.25rem;
+  border-left:1px solid rgba(255,230,0,.32);
+}
+.changelog-entry:last-child{
+  padding-bottom:0;
+}
+.changelog-entry:before{
+  content:"";
+  position:absolute;
+  left:-5px;
+  top:3px;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:var(--color-primary);
+  box-shadow:0 0 12px rgba(255,230,0,.4);
+}
+.changelog-version{
+  font-size:.8rem;
+  font-weight:700;
+  color:var(--color-primary);
+  letter-spacing:.05em;
+}
+.changelog-entry h3{
+  margin-top:.18rem;
+  font-size:.95rem;
+}
+.changelog-entry p{
+  margin-top:.25rem;
+  font-size:.82rem;
+  line-height:1.45;
+}
+@media (max-width:1100px){
+  .changelog{
+    position:relative;
+    left:auto;
+    top:auto;
+    transform:none;
+    width:min(100%,30rem);
+    min-width:0;
+    max-height:none;
+    margin:0 auto 1.25rem;
+    z-index:2;
+  }
+  body{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -114,6 +200,17 @@ margin-bottom:1rem;
 </div>
 </div>
 <div aria-hidden="true" class="card-glow"></div>
+
+<aside class="changelog" aria-label="Changelog">
+  <div class="changelog-title"><span>🐾</span><span>Changelog</span></div>
+
+  <div class="changelog-entry">
+    <div class="changelog-version">LATEST UPDATE</div>
+    <h3>Po-barky death timer</h3>
+    <p>The death threshold has been extended to 2 days of inactivity.</p>
+  </div>
+</aside>
+
 <main aria-label="Pobar social landing page" class="card">
 <section class="photo-wrap">
 <img alt="Hlavní fotografie pro profil Pobar" height="900" loading="eager" src="a9FE.png" width="1200"/>
