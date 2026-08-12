@@ -49,6 +49,10 @@
     .card{width:min(100%, 30rem);background:var(--color-surface);backdrop-filter:blur(16px);border:1px solid var(--color-border);border-radius:var(--radius-xl);box-shadow:var(--shadow);overflow:hidden}
     .photo-wrap{position:relative;aspect-ratio: 4 / 3;background:linear-gradient(135deg, var(--color-primary-soft), transparent 60%), var(--color-surface-2)}.photo-wrap img{width:100%;height:100%;object-fit:cover}
     .badge{position:absolute;left:1rem;bottom:1rem;padding:.55rem .85rem;border-radius:var(--radius-full);background:rgba(16,16,16,.7);color:#fff9ea;font-size:var(--text-sm);font-weight:700;border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px)}
+.secret-button{display:inline-flex;align-items:center;gap:.45rem;cursor:pointer;transition:transform .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease}
+.secret-button:hover{transform:translateY(-2px) scale(1.02);background:rgba(255,230,0,.18);border-color:rgba(255,230,0,.58);box-shadow:0 6px 20px rgba(255,230,0,.16)}
+.secret-button:active{transform:translateY(0) scale(.98)}
+.secret-button .secret-icon{font-size:1rem}
     .content{padding:var(--space-8)}h1{font-family:var(--font-display);font-size:var(--text-xl);line-height:1;letter-spacing:-.04em}p{margin-top:var(--space-3);color:var(--color-text-muted)}.links,.form-grid{display:grid;gap:var(--space-3);margin-top:var(--space-8)}
     .link,.toggle-btn,.send-btn{min-height:56px;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 1.1rem;background:var(--color-surface-2);border:1px solid var(--color-border);border-radius:var(--radius-lg);transition:transform .18s ease, border-color .18s ease, background .18s ease, opacity .25s ease, grid-template-rows .28s ease}.link:hover,.toggle-btn:hover,.send-btn:hover{transform:translateY(-2px);border-color:rgba(255,230,0,.52);background:var(--color-primary-soft)}
     .link-main,.toggle-main{display:flex;align-items:center;gap:.9rem}.icon{width:2.5rem;height:2.5rem;border-radius:999px;display:grid;place-items:center;background:var(--color-primary-soft);color:var(--color-primary);flex:none}.label{font-weight:700}.hint{font-size:var(--text-sm);color:var(--color-text-muted)}.arrow{font-size:1.1rem;color:var(--color-text-muted)}
@@ -206,12 +210,18 @@ margin-bottom:1rem;
 
   <div class="changelog-entry">
     <div class="changelog-version">LATEST UPDATE</div>
+    <h3>Secret Button added</h3>
+    <p>A mysterious little Secret Button has appeared on the photo. 👀🔒</p>
+  </div>
+
+  <div class="changelog-entry">
+    <div class="changelog-version">PREVIOUS UPDATE</div>
     <h3>Revive now fully resets Po-barky</h3>
     <p>Reviving Po-barky now starts a completely fresh pet, resetting all stats, XP, level, age, achievements, feeds and days.</p>
   </div>
 
   <div class="changelog-entry">
-    <div class="changelog-version">PREVIOUS UPDATE</div>
+    <div class="changelog-version">OLDER UPDATE</div>
     <h3>Po-barky death timer</h3>
     <p>The death threshold has been extended to 2 days of inactivity.</p>
   </div>
@@ -220,7 +230,7 @@ margin-bottom:1rem;
 <main aria-label="Pobar social landing page" class="card">
 <section class="photo-wrap">
 <img alt="Hlavní fotografie pro profil Pobar" height="900" loading="eager" src="a9FE.png" width="1200"/>
-<span class="badge">Pobar</span>
+<a aria-label="Secret button — Instagram" class="badge secret-button" href="https://instagram.com/kiggscz" rel="noopener noreferrer" target="_blank"><span class="secret-icon" aria-hidden="true">🔒</span><span>Secret Button</span></a>
 </section>
 <section class="content">
 <h1>Pobar</h1>
